@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "540787391100",
+    "firebase_url": "https://diceroom-85beb-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "diceroom-85beb",
+    "storage_bucket": "diceroom-85beb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540787391100:android:718e1629a048e332bde7f9",
+        "android_client_info": {
+          "package_name": "com.example.diceroom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIbgtl9MIAkSxZaxVNjFxspvDNU7M22Lw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
