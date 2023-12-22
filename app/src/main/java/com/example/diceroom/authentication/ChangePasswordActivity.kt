@@ -19,16 +19,6 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         val utils = Utils()
         val authManager = AuthManager()
-        // TODO: To be deleted
-        bind.goToProfileConfigButton.setOnClickListener {
-            val intent = Intent(this, ProfileConfigActivity::class.java)
-            startActivity(intent)
-        }
-        // TODO: To be deleted
-        bind.goToMainMenuButton.setOnClickListener {
-            val intent = Intent(this, MainMenuActivity::class.java)
-            startActivity(intent)
-        }
 
         bind.changePasswordButton.setOnClickListener {
             if (TextUtils.isEmpty(bind.oldPasswordEditText.text) || TextUtils.isEmpty(bind.passwordEditText.text) || TextUtils.isEmpty(
@@ -61,6 +51,9 @@ class ChangePasswordActivity : AppCompatActivity() {
                             editor.putString("password", bind.passwordEditText.text.toString())
                             editor.apply()
                         }
+                        val intent = Intent(this, MainMenuActivity::class.java)
+                        intent.putExtra("currentItem", 2)
+                        startActivity(intent)
                     }
                 }
             }
