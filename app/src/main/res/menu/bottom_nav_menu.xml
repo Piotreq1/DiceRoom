@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/gameField"
+        android:title="Games"
+        android:icon="@drawable/board_game_64" />
+    <item
+        android:id="@+id/meetingField"
+        android:title="Meetings"
+        android:icon="@drawable/board_game_64" />
+    <item
+        android:id="@+id/profileField"
+        android:title="Profile"
+        android:icon="@drawable/profile_user_64" />
+</menu>

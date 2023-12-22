@@ -49,6 +49,7 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.7.6")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+    implementation("androidx.preference:preference:1.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))

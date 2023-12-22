@@ -1,10 +1,12 @@
 package com.example.diceroom.authentication
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diceroom.Utils
@@ -20,6 +22,7 @@ class ProfileConfigActivity : AppCompatActivity() {
     private lateinit var bind: ProfileConfigActivityViewBinding
     private var selectedImageUri: Uri? = null
     private val utils = Utils()
+    private var isFirstTimeConfiguration: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +33,22 @@ class ProfileConfigActivity : AppCompatActivity() {
         val userManager = UserManager()
         val currentUserId = authManager.getCurrentUser()?.uid
 
+        this.onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (isFirstTimeConfiguration) {
+                        utils.showToast(bind.root.context, "You need to configure your profile!")
+                    } else {
+                        utils.showToast(bind.root.context, "Elo")
+                        finish()
+                    }
+                }
+            })
+
         if (currentUserId != null) {
             userManager.getUserById(currentUserId) { user ->
                 if (user != null) {
+                    isFirstTimeConfiguration = TextUtils.isEmpty(user.nickname)
                     bind.birthdateEditText.setText(user.birthdate)
                     bind.nameEditText.setText(user.firstname)
                     bind.nicknameEditText.setText(user.nickname)
@@ -90,6 +106,12 @@ class ProfileConfigActivity : AppCompatActivity() {
                                     "Update successful",
                                     "Update failed"
                                 )
+
+                                if (isUserUpdateSuccess) {
+                                    isFirstTimeConfiguration = false
+                                    val intent = Intent(this, ChangePasswordActivity::class.java)
+                                    startActivity(intent)
+                                }
                             }
                         }
                     }
@@ -104,8 +126,6 @@ class ProfileConfigActivity : AppCompatActivity() {
             galleryLauncher.launch("image/*")
         }
     }
-
-    // TODO: implement on back pressed -> do nothing if first login // confirm -> main screen // handle if not first login
 
     fun showDatePickerDialog(view: View) {
         val calendar = Calendar.getInstance()

@@ -49,10 +49,12 @@ class WelcomeActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 if (position == 3) {
                     skipBtn.text = "Login now!"
-                    skipBtn.backgroundTintList = ColorStateList.valueOf(Color.rgb(99, 228, 142))
+                    skipBtn.backgroundTintList = ColorStateList.valueOf(Color.rgb(0, 0, 0))
+                    skipBtn.setTextColor(Color.WHITE)
                 } else {
                     skipBtn.text = "Skip to login"
                     skipBtn.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+                    skipBtn.setTextColor(Color.BLACK)
                 }
             }
         })

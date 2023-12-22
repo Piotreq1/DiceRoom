@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
+import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.Utils
 import com.example.diceroom.databinding.ChangePasswordActivityViewBinding
 
@@ -18,10 +19,17 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         val utils = Utils()
         val authManager = AuthManager()
+        // TODO: To be deleted
         bind.goToProfileConfigButton.setOnClickListener {
             val intent = Intent(this, ProfileConfigActivity::class.java)
             startActivity(intent)
         }
+        // TODO: To be deleted
+        bind.goToMainMenuButton.setOnClickListener {
+            val intent = Intent(this, MainMenuActivity::class.java)
+            startActivity(intent)
+        }
+
         bind.changePasswordButton.setOnClickListener {
             if (TextUtils.isEmpty(bind.oldPasswordEditText.text) || TextUtils.isEmpty(bind.passwordEditText.text) || TextUtils.isEmpty(
                     bind.confirmPasswordEditText.text

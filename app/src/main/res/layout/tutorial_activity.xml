@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="nothing"
         android:layout_marginBottom="60dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial_pager"
         app:tabBackground="@drawable/tab_selector"
         app:tabGravity="center"
