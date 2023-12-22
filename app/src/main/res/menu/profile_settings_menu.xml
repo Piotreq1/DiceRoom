@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/meetingsItem"
+        android:icon="@drawable/group_64"
+        android:title="Your meetings" />
+    <item
+        android:id="@+id/editProfileItem"
+        android:icon="@drawable/edit_64"
+        android:title="Edit profile" />
+    <item
+        android:id="@+id/notificationItem"
+        android:icon="@drawable/notification_64"
+        android:title="Notifications" />
+    <item
+        android:id="@+id/changePasswordItem"
+        android:icon="@drawable/lock_64"
+        android:title="Change password" />
+    <item
+        android:id="@+id/tutorialItem"
+        android:icon="@drawable/information_64"
+        android:title="Tutorial" />
+    <item
+        android:id="@+id/logoutItem"
+        android:icon="@drawable/logout_64"
+        android:title="Log out" />
+
+</menu>

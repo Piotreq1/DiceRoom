@@ -48,7 +48,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         val adapter = ViewPagerAdapter(fragments, this)
         viewPager.adapter = adapter
-        viewPager.currentItem = 1
+        viewPager.currentItem = intent.getIntExtra("currentItem", 1)
         bind.bottomNav.menu.getItem(viewPager.currentItem).isChecked = true
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -60,9 +60,9 @@ class MainMenuActivity : AppCompatActivity() {
 
         bind.bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.gameField -> viewPager.currentItem = 0
-                R.id.meetingField -> viewPager.currentItem = 1
-                R.id.profileField -> viewPager.currentItem = 2
+                R.id.gameItem -> viewPager.currentItem = 0
+                R.id.meetingItem -> viewPager.currentItem = 1
+                R.id.profileItem -> viewPager.currentItem = 2
             }
             true
         }

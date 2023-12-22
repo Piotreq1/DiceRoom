@@ -9,6 +9,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.Utils
 import com.example.diceroom.databinding.ProfileConfigActivityViewBinding
 import com.example.diceroom.models.UserManager
@@ -20,9 +21,11 @@ import java.util.Locale
 
 class ProfileConfigActivity : AppCompatActivity() {
     private lateinit var bind: ProfileConfigActivityViewBinding
+    private var currentUserId: String? = null
     private var selectedImageUri: Uri? = null
     private val utils = Utils()
     private var isFirstTimeConfiguration: Boolean = false
+    private val userManager = UserManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,23 +33,20 @@ class ProfileConfigActivity : AppCompatActivity() {
         setContentView(bind.root)
 
         val authManager = AuthManager()
-        val userManager = UserManager()
-        val currentUserId = authManager.getCurrentUser()?.uid
+        currentUserId = authManager.getCurrentUser()?.uid!!
 
-        this.onBackPressedDispatcher.addCallback(this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (isFirstTimeConfiguration) {
-                        utils.showToast(bind.root.context, "You need to configure your profile!")
-                    } else {
-                        utils.showToast(bind.root.context, "Elo")
-                        finish()
-                    }
+        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isFirstTimeConfiguration) {
+                    utils.showToast(bind.root.context, "You need to configure your profile!")
+                } else {
+                    finish()
                 }
-            })
+            }
+        })
 
         if (currentUserId != null) {
-            userManager.getUserById(currentUserId) { user ->
+            userManager.getUserById(currentUserId!!) { user ->
                 if (user != null) {
                     isFirstTimeConfiguration = TextUtils.isEmpty(user.nickname)
                     bind.birthdateEditText.setText(user.birthdate)
@@ -83,7 +83,13 @@ class ProfileConfigActivity : AppCompatActivity() {
                     "birthdate" to bind.birthdateEditText.text.toString()
                 )
 
-                if (currentUserId != null) {
+                if (selectedImageUri == null) {
+                    if (!isFirstTimeConfiguration) {
+                        updateUserInfo(updatedFields)
+                    } else {
+                        utils.showToast(this, "You need to pick an avatar")
+                    }
+                } else {
                     utils.uploadImageToFirebaseStorage(selectedImageUri) { isImageUploadSuccess, imageUploadMessage ->
                         utils.handleFirebaseResult(
                             isImageUploadSuccess,
@@ -92,33 +98,12 @@ class ProfileConfigActivity : AppCompatActivity() {
                             "Image upload successful",
                             "Image upload failed"
                         )
-
                         if (isImageUploadSuccess) {
                             updatedFields["avatar"] = imageUploadMessage.toString()
-
-                            userManager.updateUserFields(
-                                currentUserId, updatedFields
-                            ) { isUserUpdateSuccess, userUpdateMessage ->
-                                utils.handleFirebaseResult(
-                                    isUserUpdateSuccess,
-                                    userUpdateMessage,
-                                    this,
-                                    "Update successful",
-                                    "Update failed"
-                                )
-
-                                if (isUserUpdateSuccess) {
-                                    isFirstTimeConfiguration = false
-                                    val intent = Intent(this, ChangePasswordActivity::class.java)
-                                    startActivity(intent)
-                                }
-                            }
+                            updateUserInfo(updatedFields)
                         }
                     }
-                } else {
-                    utils.showToast(this, "User not found")
                 }
-
             }
         }
 
@@ -130,7 +115,7 @@ class ProfileConfigActivity : AppCompatActivity() {
     fun showDatePickerDialog(view: View) {
         val calendar = Calendar.getInstance()
 
-        val datePickerDialog = DatePickerDialog(
+        DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
@@ -138,7 +123,6 @@ class ProfileConfigActivity : AppCompatActivity() {
                     time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
                         ?: Date()
                 }
-
                 if (selectedCalendar.timeInMillis > System.currentTimeMillis()) {
                     utils.showToast(this, "Invalid birthdate. Please select a valid date.")
                 } else {
@@ -148,9 +132,32 @@ class ProfileConfigActivity : AppCompatActivity() {
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
-        )
+        ).apply {
+            show()
+        }
+    }
 
-        datePickerDialog.show()
+    private fun updateUserInfo(updatedFields: Map<String, String>) {
+        currentUserId?.let {
+            userManager.updateUserFields(
+                it, updatedFields
+            ) { isUserUpdateSuccess, userUpdateMessage ->
+                utils.handleFirebaseResult(
+                    isUserUpdateSuccess,
+                    userUpdateMessage,
+                    this,
+                    "Update successful",
+                    "Update failed"
+                )
+
+                if (isUserUpdateSuccess) {
+                    isFirstTimeConfiguration = false
+                    val intent = Intent(this, MainMenuActivity::class.java)
+                    intent.putExtra("currentItem", 2)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
 }

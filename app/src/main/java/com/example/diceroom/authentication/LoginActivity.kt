@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.Utils
 import com.example.diceroom.databinding.LoginActivityViewBinding
 import com.example.diceroom.models.UserManager
@@ -90,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
 
-                        val intent = Intent(this, ChangePasswordActivity::class.java)
+                        val intent = Intent(this, MainMenuActivity::class.java)
                         startActivity(intent)
                     }
                 }
