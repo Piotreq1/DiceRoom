@@ -49,6 +49,7 @@ class GameListAdapter :
 
     fun setData(newGameList: List<GameInfo>) {
         gameList = newGameList
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
