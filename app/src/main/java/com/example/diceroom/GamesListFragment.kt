@@ -1,5 +1,6 @@
 package com.example.diceroom
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.diceroom.models.GameInfo
 import com.example.diceroom.models.GameManager
 
-class GamesListFragment : Fragment() {
+class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GameListAdapter
@@ -25,7 +26,7 @@ class GamesListFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = GameListAdapter()
+        adapter = GameListAdapter(recyclerView, this)
 
         recyclerView.adapter = adapter
 
@@ -41,12 +42,20 @@ class GamesListFragment : Fragment() {
 
         return view
     }
+
+    override fun onItemClick(gameId: String) {
+        val intent = Intent(requireContext(), GameDetailsActivity::class.java)
+        intent.putExtra("GAME_ID", gameId)
+        startActivity(intent)
+    }
 }
 
-class GameListAdapter :
-    RecyclerView.Adapter<GameListAdapter.GameViewHolder>() {
+class GameListAdapter(private val recyclerView: RecyclerView, private val itemClickListener: OnItemClickListener) :
+    RecyclerView.Adapter<GameListAdapter.GameViewHolder>(){
     private var gameList: List<GameInfo> = emptyList()
-
+    interface OnItemClickListener {
+        fun onItemClick(gameId: String)
+    }
     fun setData(newGameList: List<GameInfo>) {
         gameList = newGameList
         notifyDataSetChanged()
@@ -55,6 +64,13 @@ class GameListAdapter :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.game_info_item, parent, false)
+        view.setOnClickListener {
+            val position = recyclerView.getChildAdapterPosition(view)
+            if (position != RecyclerView.NO_POSITION) {
+                val game = gameList[position]
+                itemClickListener.onItemClick(game.id)
+            }
+        }
         return GameViewHolder(view)
     }
 
