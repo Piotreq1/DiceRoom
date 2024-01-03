@@ -16,6 +16,7 @@ data class GameInfo(
 
 
 data class GameDetails(
+    val name: String?,
     val minPlayers: Int?,
     val maxPlayers: Int?,
     val yearPublished: Int?,
@@ -107,7 +108,6 @@ class GameManager {
     fun fetchGameDetailsById(gameId: String, callback: (GameDetails?, Exception?) -> Unit) {
         val url = "$gameInfoEndpoint$gameId"
         val request = Request.Builder().url(url).build()
-
         enqueueCall(request) { responseBody, exception ->
             try {
                 val gameDetails = parseGameDetailsResponse(responseBody)
@@ -127,6 +127,7 @@ class GameManager {
             parser.setInput(StringReader(responseBody))
 
             var eventType = parser.eventType
+            var name: String? = null
             var minPlayers: Int? = null
             var maxPlayers: Int? = null
             var yearPublished: Int? = null
@@ -138,6 +139,12 @@ class GameManager {
                 when (eventType) {
                     XmlPullParser.START_TAG -> {
                         when (parser.name) {
+                            "name" -> {
+                                val typeAttribute = parser.getAttributeValue(null, "type")
+                                if (typeAttribute == "primary") {
+                                    name = parser.getAttributeValue(null, "value")
+                                }
+                            }
                             "minplayers" -> minPlayers =
                                 parser.getAttributeValue(null, "value").toInt()
 
@@ -147,7 +154,7 @@ class GameManager {
                             "yearpublished" -> yearPublished =
                                 parser.getAttributeValue(null, "value").toInt()
 
-                            "description" -> description = parser.getAttributeValue(null, "value")
+                            "description" -> description = parser.nextText()
                             "thumbnail" -> thumbnail = parser.getAttributeValue(null, "value")
                             "minage" -> minAge = parser.getAttributeValue(null, "value").toInt()
                         }
@@ -156,7 +163,7 @@ class GameManager {
                 eventType = parser.next()
             }
             return GameDetails(
-                minPlayers, maxPlayers, yearPublished, description, thumbnail, minAge
+               name, minPlayers, maxPlayers, yearPublished, description, thumbnail, minAge
             )
         } catch (e: Exception) {
             e.printStackTrace()
