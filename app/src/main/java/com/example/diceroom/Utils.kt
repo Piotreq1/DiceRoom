@@ -2,6 +2,8 @@ package com.example.diceroom
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -14,7 +16,9 @@ import java.util.Locale
 class Utils {
 
     fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
-        Toast.makeText(context, message, duration).show()
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showSnackbar(context: Context, message: String) {

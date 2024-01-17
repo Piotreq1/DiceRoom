@@ -29,7 +29,7 @@
                 android:layout_margin="15dp"
                 android:contentDescription="favourite"
                 android:scaleType="centerCrop"
-                android:src="@drawable/favourite_empty" />
+                android:src="@drawable/favourite_empty64" />
             <!-- TODO: Reformat icon-->
         </LinearLayout>
 
@@ -47,7 +47,7 @@
                 android:layout_margin="20dp"
                 android:contentDescription="game avatar"
                 android:scaleType="centerCrop"
-                android:src="@drawable/logout_64" />
+                android:src="@drawable/loading" />
 
             <TextView
                 android:id="@+id/gameName"

@@ -145,6 +145,8 @@ class GameManager {
                                     name = parser.getAttributeValue(null, "value")
                                 }
                             }
+
+                            "thumbnail" -> thumbnail = parser.nextText()
                             "minplayers" -> minPlayers =
                                 parser.getAttributeValue(null, "value").toInt()
 
@@ -155,7 +157,6 @@ class GameManager {
                                 parser.getAttributeValue(null, "value").toInt()
 
                             "description" -> description = parser.nextText()
-                            "thumbnail" -> thumbnail = parser.getAttributeValue(null, "value")
                             "minage" -> minAge = parser.getAttributeValue(null, "value").toInt()
                         }
                     }
@@ -163,7 +164,7 @@ class GameManager {
                 eventType = parser.next()
             }
             return GameDetails(
-               name, minPlayers, maxPlayers, yearPublished, description, thumbnail, minAge
+                name, minPlayers, maxPlayers, yearPublished, description, thumbnail, minAge
             )
         } catch (e: Exception) {
             e.printStackTrace()

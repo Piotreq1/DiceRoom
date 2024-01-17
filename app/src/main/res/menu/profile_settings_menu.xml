@@ -21,6 +21,10 @@
         android:icon="@drawable/information_64"
         android:title="Tutorial" />
     <item
+        android:id="@+id/favouritesItem"
+        android:icon="@drawable/favourite64"
+        android:title="Favourite games" />
+    <item
         android:id="@+id/logoutItem"
         android:icon="@drawable/logout_64"
         android:title="Log out" />

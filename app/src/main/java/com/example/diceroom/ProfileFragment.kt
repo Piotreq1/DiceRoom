@@ -90,6 +90,10 @@ class ProfileFragment : Fragment() {
                         startActivity(intent)
                         true
                     }
+                    R.id.favouritesItem -> {
+                        // TODO: Favourites list GameListFragment?
+                        true
+                    }
 
                     R.id.logoutItem -> {
                         authManager.logout()

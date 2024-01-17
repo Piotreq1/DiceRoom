@@ -89,7 +89,7 @@ class GameListAdapter(private val recyclerView: RecyclerView, private val itemCl
         private val yearPublishedTextView: TextView = itemView.findViewById(R.id.yearPublished)
         fun bind(game: GameInfo) {
             Glide.with(itemView).load(game.thumbnail)
-                .apply(RequestOptions().placeholder(R.drawable.logout_64)).into(thumbnailImageView)
+                .apply(RequestOptions().placeholder(R.drawable.loading)).into(thumbnailImageView)
 
             nameTextView.text = game.name
             yearPublishedTextView.text = game.yearPublished

@@ -26,7 +26,7 @@
                 android:layout_marginStart="20dp"
                 android:scaleType="centerCrop"
                 android:contentDescription="game avatar"
-                android:src="@drawable/logout_64" />
+                android:src="@drawable/loading" />
 
             <LinearLayout
                 android:layout_width="match_parent"
