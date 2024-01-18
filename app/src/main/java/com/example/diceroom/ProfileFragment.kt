@@ -1,5 +1,6 @@
 package com.example.diceroom
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +22,17 @@ import com.example.diceroom.models.UserManager
 class ProfileFragment : Fragment() {
     private lateinit var bind: FragmentProfileBinding
     private val utils = Utils()
+
+    interface OnNavigateToGameListListener {
+        fun navigateToGameList()
+    }
+
+    private var navigateToGameListListener: OnNavigateToGameListListener? = null
+
+    fun setOnNavigateToGameListListener(listener: OnNavigateToGameListListener) {
+        navigateToGameListListener = listener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -91,7 +103,13 @@ class ProfileFragment : Fragment() {
                         true
                     }
                     R.id.favouritesItem -> {
-                        // TODO: Favourites list GameListFragment?
+                        if (currentUserId != null) {
+                            val sharedPreferences = requireContext().getSharedPreferences("gameListPrefs", Context.MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+                            editor.putBoolean("isFavourites", true)
+                            editor.apply()
+                            navigateToGameListListener?.navigateToGameList()
+                        }
                         true
                     }
 

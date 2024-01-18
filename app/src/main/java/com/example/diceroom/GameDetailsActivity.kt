@@ -18,6 +18,7 @@ class GameDetailsActivity : AppCompatActivity() {
         bind = ActivityGameDetailsBinding.inflate(layoutInflater)
         setContentView(bind.root)
         val id = intent.getStringExtra("GAME_ID")
+        val isFavourite = intent.getBooleanExtra("isFavourite", false)
         val utils = Utils()
         val userManager = UserManager()
         val currUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -47,6 +48,15 @@ class GameDetailsActivity : AppCompatActivity() {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             startActivity(intent)
                         }
+                        val img: Int = if(isFavourite){
+                            R.drawable.favourite64
+                        } else{
+                            R.drawable.favourite_empty64
+                        }
+                        Glide.with(this).load(img)
+                            .apply(RequestOptions().placeholder(R.drawable.favourite_empty64))
+                            .into(bind.favouriteImage)
+
 
                         bind.favouriteImage.setOnClickListener {
                             val currentState =

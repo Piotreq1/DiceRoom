@@ -4,7 +4,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 
 data class UserModel(
@@ -12,7 +11,7 @@ data class UserModel(
     val nickname: String = "",
     val firstname: String = "",
     val birthdate: String = "",
-    val favourites: MutableList<String>? = mutableListOf()
+    val favourites: List<String>? = null
 )
 
 
@@ -21,8 +20,7 @@ class UserManager {
 
 
     fun addUser(userId: String, user: UserModel, onComplete: (Boolean, String?) -> Unit) {
-        userRef.child(userId).setValue(user)
-            .addOnCompleteListener { task ->
+        userRef.child(userId).setValue(user).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     onComplete(true, null)
                 } else {
@@ -33,9 +31,7 @@ class UserManager {
 
 
     fun updateUserFields(
-        userId: String,
-        updatedFields: Map<String, Any>,
-        onComplete: (Boolean, String?) -> Unit
+        userId: String, updatedFields: Map<String, Any>, onComplete: (Boolean, String?) -> Unit
     ) {
         userRef.child(userId).updateChildren(updatedFields).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -55,29 +51,50 @@ class UserManager {
     }
 
     fun getFavourites(userId: String, onComplete: (List<String>?) -> Unit) {
-        userRef.child(userId).child("favourites").get().addOnSuccessListener { dataSnapshot ->
-            val favoritesData =
-                dataSnapshot.getValue(object : GenericTypeIndicator<List<String>>() {})
-            onComplete(favoritesData)
-        }.addOnFailureListener {
-            onComplete(null)
-        }
+        val userFavouritesRef = userRef.child(userId).child("favourites")
+
+        userFavouritesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val favoritesList: List<String>? = snapshot.value as? List<String>
+                onComplete(favoritesList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                onComplete(null)
+            }
+        })
     }
 
     fun addToFavourites(userId: String, newItem: String, onComplete: (Boolean, String?) -> Unit) {
-        userRef.child(userId).child("favourites").push().setValue(newItem).addOnCompleteListener {
-            if (it.isSuccessful) {
-                onComplete(true, null)
-            } else {
-                onComplete(false, it.exception?.message)
+        val userFavouritesRef = userRef.child(userId).child("favourites")
+
+        userFavouritesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentFavourites: MutableList<String> = if (snapshot.exists()) {
+                    snapshot.value as? MutableList<String> ?: mutableListOf()
+                } else {
+                    mutableListOf()
+                }
+                currentFavourites.add(newItem)
+
+                userFavouritesRef.setValue(currentFavourites).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        onComplete(true, null)
+                    } else {
+                        onComplete(false, it.exception?.message)
+                    }
+                }
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                onComplete(false, error.message)
+            }
+
+        })
     }
 
     fun deleteFromFavourites(
-        userId: String,
-        itemToDelete: String,
-        onComplete: (Boolean, String?) -> Unit
+        userId: String, itemToDelete: String, onComplete: (Boolean, String?) -> Unit
     ) {
         userRef.child(userId).child("favourites").orderByValue().equalTo(itemToDelete)
             .addListenerForSingleValueEvent(object : ValueEventListener {

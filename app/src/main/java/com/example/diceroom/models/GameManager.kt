@@ -11,7 +11,7 @@ import java.io.IOException
 import java.io.StringReader
 
 data class GameInfo(
-    val id: String, val thumbnail: String, val name: String, val yearPublished: String
+    val id: String, val thumbnail: String, val name: String, val yearPublished: String, val isFavourite: Boolean
 )
 
 
@@ -47,12 +47,16 @@ class GameManager {
         })
     }
 
-    fun fetchGamesInfo(callback: (List<GameInfo>?, Exception?) -> Unit) {
+    fun fetchGamesInfo(
+        favouriteGames: List<String>?,
+        isFavourites: Boolean,
+        callback: (List<GameInfo>?, Exception?) -> Unit
+    ) {
         val request = Request.Builder().url(hotListEndpoint).build()
 
         enqueueCall(request) { responseBody, exception ->
             try {
-                val gameInfoList = parseGameInfoResponse(responseBody)
+                val gameInfoList = parseGameInfoResponse(responseBody, favouriteGames, isFavourites)
                 callback(gameInfoList, exception)
             } catch (e: Exception) {
                 callback(null, e)
@@ -60,7 +64,11 @@ class GameManager {
         }
     }
 
-    private fun parseGameInfoResponse(responseBody: String?): List<GameInfo>? {
+    private fun parseGameInfoResponse(
+        responseBody: String?,
+        favouriteGames: List<String>?,
+        isFavourites: Boolean
+    ): List<GameInfo>? {
         if (responseBody.isNullOrBlank()) {
             return null
         }
@@ -84,14 +92,29 @@ class GameManager {
                             "item" -> gameId = parser.getAttributeValue(null, "id")
                             "thumbnail" -> thumbnail = parser.getAttributeValue(null, "value")
                             "name" -> name = parser.getAttributeValue(null, "value")
-                            "yearpublished" -> yearPublished = parser.getAttributeValue(null, "value")
+                            "yearpublished" -> yearPublished =
+                                parser.getAttributeValue(null, "value")
                         }
                     }
 
                     XmlPullParser.END_TAG -> {
                         if (parser.name == "item") {
-                            val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished)
-                            gameInfoList.add(gameInfo)
+                            if (!isFavourites) {
+                                var isFavourite = false
+                                if (favouriteGames != null) {
+                                    if (favouriteGames.contains(gameId)) {
+                                        isFavourite = true
+                                    }
+                                }
+
+                                val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished, isFavourite)
+                                gameInfoList.add(gameInfo)
+                            } else if (favouriteGames != null) {
+                                if (favouriteGames.contains(gameId)) {
+                                    val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished, true)
+                                    gameInfoList.add(gameInfo)
+                                }
+                            }
                         }
                     }
                 }

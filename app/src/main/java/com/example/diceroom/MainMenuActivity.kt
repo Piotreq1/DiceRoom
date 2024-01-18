@@ -9,7 +9,7 @@ import com.example.diceroom.databinding.MainMenuActivityBinding
 import com.example.diceroom.tutorial.ViewPagerAdapter
 
 
-class MainMenuActivity : AppCompatActivity() {
+class MainMenuActivity : AppCompatActivity(), ProfileFragment.OnNavigateToGameListListener {
     lateinit var viewPager: ViewPager2
     private lateinit var bind: MainMenuActivityBinding
     private var lastBackPressedTime: Long = 0
@@ -48,6 +48,9 @@ class MainMenuActivity : AppCompatActivity() {
         viewPager.currentItem = intent.getIntExtra("currentItem", 1)
         bind.bottomNav.menu.getItem(viewPager.currentItem).isChecked = true
 
+        val profileFragment = fragments[2] as ProfileFragment
+        profileFragment.setOnNavigateToGameListListener(this)
+
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -63,5 +66,9 @@ class MainMenuActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    override fun navigateToGameList() {
+        viewPager.currentItem = 0
     }
 }
