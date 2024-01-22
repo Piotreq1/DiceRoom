@@ -17,8 +17,8 @@ class GameDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bind = ActivityGameDetailsBinding.inflate(layoutInflater)
         setContentView(bind.root)
-        val id = intent.getStringExtra("GAME_ID")
-        val isFavourite = intent.getBooleanExtra("isFavourite", false)
+        val id = intent.getStringExtra("gameId")
+        var isGameFavourite = intent.getBooleanExtra("isFavourite", false)
         val utils = Utils()
         val userManager = UserManager()
         val currUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -48,20 +48,15 @@ class GameDetailsActivity : AppCompatActivity() {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             startActivity(intent)
                         }
-                        val img: Int = if(isFavourite){
-                            R.drawable.favourite64
-                        } else{
-                            R.drawable.favourite_empty64
-                        }
+
+                        val img: Int = if (isGameFavourite) R.drawable.favourite64 else R.drawable.favourite_empty64
+
                         Glide.with(this).load(img)
                             .apply(RequestOptions().placeholder(R.drawable.favourite_empty64))
                             .into(bind.favouriteImage)
 
-
                         bind.favouriteImage.setOnClickListener {
-                            val currentState =
-                                bind.favouriteImage.tag as? Int ?: R.drawable.favourite_empty64
-                            if (currentState == R.drawable.favourite_empty64) {
+                            if (!isGameFavourite) {
                                 bind.favouriteImage.tag = R.drawable.favourite64
                                 if (currUserId != null) {
                                     userManager.addToFavourites(
@@ -77,6 +72,7 @@ class GameDetailsActivity : AppCompatActivity() {
                                         )
                                     }
                                 }
+                                isGameFavourite = true
                             } else {
                                 bind.favouriteImage.tag = R.drawable.favourite_empty64
                                 if (currUserId != null) {
@@ -93,7 +89,9 @@ class GameDetailsActivity : AppCompatActivity() {
                                         )
                                     }
                                 }
+                                isGameFavourite = false
                             }
+
                             Glide.with(this).load(bind.favouriteImage.tag)
                                 .apply(RequestOptions().placeholder(R.drawable.favourite_empty64))
                                 .into(bind.favouriteImage)

@@ -27,9 +27,9 @@ import kotlin.coroutines.suspendCoroutine
 class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GameListAdapter
-    private var favourites: List<String> = emptyList()
-    private var allGames: List<GameInfo> = emptyList()
-    private var favouriteGames: List<GameInfo>? = null
+    private var favouritesGameIdsList: List<String> = emptyList()
+    private var allGamesList: List<GameInfo> = emptyList()
+    private var favouriteGamesList: List<GameInfo>? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -40,20 +40,20 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
 
         recyclerView.adapter = adapter
         lifecycleScope.launch {
-            val favouriteGamesList = fetchFavouritesGameList()
+            val favouriteGamesList = fetchFavouriteGamesList()
             if (favouriteGamesList != null) {
-                favourites = favouriteGamesList
+                favouritesGameIdsList = favouriteGamesList
             }
 
-            allGames = fetchGames(false)
-            adapter.setData(allGames)
+            allGamesList = fetchGames(false)
+            adapter.setData(allGamesList)
         }
         return view
     }
 
     override fun onItemClick(gameId: String, isFavourite: Boolean) {
         val intent = Intent(requireContext(), GameDetailsActivity::class.java)
-        intent.putExtra("GAME_ID", gameId)
+        intent.putExtra("gameId", gameId)
         intent.putExtra("isFavourite", isFavourite)
         startActivity(intent)
     }
@@ -65,7 +65,7 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
         }
     }
 
-    private suspend fun fetchFavouritesGameList(): List<String>? {
+    private suspend fun fetchFavouriteGamesList(): List<String>? {
         return suspendCoroutine { continuation ->
             val currentUserId = AuthManager().getCurrentUser()?.uid
             if (currentUserId != null) {
@@ -81,39 +81,39 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
     private suspend fun checkIfFavourites() {
         val sharedPreferences =
             requireContext().getSharedPreferences("gameListPrefs", Context.MODE_PRIVATE)
-        val isFavourites = sharedPreferences.getBoolean("isFavourites", false)
-        if (isFavourites) {
+        val ifFavouritesView = sharedPreferences.getBoolean("isFavourites", false)
+        if (ifFavouritesView) {
             val editor = sharedPreferences.edit()
             editor.putBoolean("isFavourites", false)
             editor.apply()
             lifecycleScope.launch {
-                val favouriteGamesList = fetchFavouritesGameList()
+                val favouriteGamesList = fetchFavouriteGamesList()
                 if (favouriteGamesList != null) {
-                    favourites = favouriteGamesList
+                    favouritesGameIdsList = favouriteGamesList
                 }
-                favouriteGames = fetchGames(true)
-                adapter.setData(favouriteGames!!)
+                this@GamesListFragment.favouriteGamesList = fetchGames(true)
+                adapter.setData(this@GamesListFragment.favouriteGamesList!!)
             }
         } else {
-            if (favouriteGames != null) {
+            if (favouriteGamesList != null) {
                 lifecycleScope.launch {
-                    val favouriteGamesList = fetchFavouritesGameList()
+                    val favouriteGamesList = fetchFavouriteGamesList()
                     if (favouriteGamesList != null) {
-                        favourites = favouriteGamesList
+                        favouritesGameIdsList = favouriteGamesList
                     }
-                    allGames = fetchGames(false)
-                    adapter.setData(allGames)
-                    favouriteGames = null
+                    allGamesList = fetchGames(false)
+                    adapter.setData(allGamesList)
+                    this@GamesListFragment.favouriteGamesList = null
                 }
             }
         }
     }
 
-    private fun fetchGames(isFavourites: Boolean): List<GameInfo> {
+    private fun fetchGames(ifFavouriteGames: Boolean): List<GameInfo> {
         val gameManager = GameManager()
         val utils = Utils()
         val future = CompletableFuture<List<GameInfo>>()
-        gameManager.fetchGamesInfo(favourites, isFavourites) { gameInfoList, exception ->
+        gameManager.fetchGamesInfo(favouritesGameIdsList, ifFavouriteGames) { gameInfoList, exception ->
             if (exception == null && gameInfoList != null) {
                 future.complete(gameInfoList)
             } else {

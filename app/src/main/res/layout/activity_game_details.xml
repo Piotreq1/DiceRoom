@@ -30,7 +30,6 @@
                 android:contentDescription="favourite"
                 android:scaleType="centerCrop"
                 android:src="@drawable/favourite_empty64" />
-            <!-- TODO: Reformat icon-->
         </LinearLayout>
 
         <LinearLayout

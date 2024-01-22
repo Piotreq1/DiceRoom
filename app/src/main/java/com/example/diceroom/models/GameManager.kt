@@ -48,15 +48,15 @@ class GameManager {
     }
 
     fun fetchGamesInfo(
-        favouriteGames: List<String>?,
-        isFavourites: Boolean,
+        favouritesGameIdsList: List<String>?,
+        ifFavouriteGames: Boolean,
         callback: (List<GameInfo>?, Exception?) -> Unit
     ) {
         val request = Request.Builder().url(hotListEndpoint).build()
 
         enqueueCall(request) { responseBody, exception ->
             try {
-                val gameInfoList = parseGameInfoResponse(responseBody, favouriteGames, isFavourites)
+                val gameInfoList = parseGameInfoResponse(responseBody, favouritesGameIdsList, ifFavouriteGames)
                 callback(gameInfoList, exception)
             } catch (e: Exception) {
                 callback(null, e)
@@ -66,8 +66,8 @@ class GameManager {
 
     private fun parseGameInfoResponse(
         responseBody: String?,
-        favouriteGames: List<String>?,
-        isFavourites: Boolean
+        favouritesGameIdsList: List<String>?,
+        ifFavouriteGames: Boolean
     ): List<GameInfo>? {
         if (responseBody.isNullOrBlank()) {
             return null
@@ -99,21 +99,10 @@ class GameManager {
 
                     XmlPullParser.END_TAG -> {
                         if (parser.name == "item") {
-                            if (!isFavourites) {
-                                var isFavourite = false
-                                if (favouriteGames != null) {
-                                    if (favouriteGames.contains(gameId)) {
-                                        isFavourite = true
-                                    }
-                                }
-
-                                val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished, isFavourite)
+                            val isGameFavourite = favouritesGameIdsList?.contains(gameId) == true
+                            if (!ifFavouriteGames || isGameFavourite) {
+                                val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished, isGameFavourite)
                                 gameInfoList.add(gameInfo)
-                            } else if (favouriteGames != null) {
-                                if (favouriteGames.contains(gameId)) {
-                                    val gameInfo = GameInfo(gameId, thumbnail, name, yearPublished, true)
-                                    gameInfoList.add(gameInfo)
-                                }
                             }
                         }
                     }
