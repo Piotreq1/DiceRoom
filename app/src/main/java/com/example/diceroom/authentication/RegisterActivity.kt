@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
-import com.example.diceroom.Utils
 import com.example.diceroom.databinding.SigninActivityViewBinding
 import com.example.diceroom.models.UserManager
 import com.example.diceroom.models.UserModel
+import com.example.diceroom.utils.Utils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 

@@ -7,9 +7,9 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diceroom.MainMenuActivity
-import com.example.diceroom.Utils
 import com.example.diceroom.databinding.LoginActivityViewBinding
 import com.example.diceroom.models.UserManager
+import com.example.diceroom.utils.Utils
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var bind: LoginActivityViewBinding

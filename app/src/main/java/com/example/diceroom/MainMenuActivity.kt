@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.diceroom.databinding.MainMenuActivityBinding
+import com.example.diceroom.games.GamesListFragment
+import com.example.diceroom.meetings.MeetingFragment
+import com.example.diceroom.profile.ProfileFragment
 import com.example.diceroom.tutorial.ViewPagerAdapter
 
 
