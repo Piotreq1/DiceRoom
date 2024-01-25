@@ -1,4 +1,4 @@
-package com.example.diceroom
+package com.example.diceroom.games
 
 import android.content.Intent
 import android.net.Uri
@@ -6,9 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.diceroom.R
 import com.example.diceroom.databinding.ActivityGameDetailsBinding
-import com.example.diceroom.models.GameManager
-import com.example.diceroom.models.UserManager
+import com.example.diceroom.managers.GameManager
+import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 
 class GameDetailsActivity : AppCompatActivity() {

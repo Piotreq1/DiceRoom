@@ -59,7 +59,7 @@
             android:name=".MainMenuActivity"
             android:exported="true" />
         <activity
-            android:name=".GameDetailsActivity"
+            android:name=".games.GameDetailsActivity"
             android:exported="true" />
     </application>
 

@@ -1,4 +1,4 @@
-package com.example.diceroom
+package com.example.diceroom.profile
 
 import android.content.Context
 import android.content.Intent
@@ -11,12 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import com.example.diceroom.authentication.AuthManager
+import com.example.diceroom.R
+import com.example.diceroom.utils.Utils
+import com.example.diceroom.WelcomeActivity
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.authentication.ChangePasswordActivity
-import com.example.diceroom.authentication.ProfileConfigActivity
 import com.example.diceroom.authentication.SelectLoginActivity
 import com.example.diceroom.databinding.FragmentProfileBinding
-import com.example.diceroom.models.UserManager
+import com.example.diceroom.managers.UserManager
 
 
 class ProfileFragment : Fragment() {

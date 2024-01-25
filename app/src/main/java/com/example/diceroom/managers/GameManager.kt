@@ -1,4 +1,4 @@
-package com.example.diceroom.models
+package com.example.diceroom.managers
 
 import android.util.Xml
 import okhttp3.Call

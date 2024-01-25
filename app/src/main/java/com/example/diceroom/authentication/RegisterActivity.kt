@@ -4,23 +4,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
-import com.example.diceroom.Utils
+import androidx.credentials.CreatePasswordRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.CreateCredentialCancellationException
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.lifecycle.lifecycleScope
 import com.example.diceroom.databinding.SigninActivityViewBinding
-import com.example.diceroom.models.UserManager
-import com.example.diceroom.models.UserModel
+import com.example.diceroom.managers.UserManager
+import com.example.diceroom.managers.UserModel
+import com.example.diceroom.utils.Utils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var bind: SigninActivityViewBinding
-
+    private val utils = Utils()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = SigninActivityViewBinding.inflate(layoutInflater)
         setContentView(bind.root)
-
-        val utils = Utils()
-        val authManager = AuthManager()
 
         bind.goToLoginButton1.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -36,44 +39,67 @@ class RegisterActivity : AppCompatActivity() {
             } else if (bind.passwordEditText.text.toString() != bind.confirmPasswordEditText.text.toString()) {
                 utils.showToast(this, "Passwords need to be the same")
             } else {
-                authManager.register(
-                    bind.emailEditText.text.toString(),
-                    bind.passwordEditText.text.toString()
-                ) { isSuccess, message ->
-                    utils.handleFirebaseResult(
-                        isSuccess,
-                        message,
-                        this,
-                        "Register success! You can now log in",
-                        "Registration failed"
-                    )
-                    if (isSuccess) {
-                        val userManager = UserManager()
-                        if (message != null) {
-                            userManager.addUser(message, UserModel()) { isSuccess1, _ ->
-                                if (!isSuccess1) {
-                                    val user = Firebase.auth.currentUser
-                                    user?.delete()
-                                        ?.addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                utils.showToast(
-                                                    this,
-                                                    "Error occurred - register again"
-                                                )
-                                            } else {
-                                                utils.showToast(this, "Failed to delete account")
-                                            }
-                                        }
+                registerUser()
+            }
+        }
+    }
+
+    private fun registerUser() {
+        val authManager = AuthManager()
+
+        authManager.register(
+            bind.emailEditText.text.toString(), bind.passwordEditText.text.toString()
+        ) { isSuccess, message ->
+            utils.handleFirebaseResult(
+                isSuccess,
+                message,
+                this,
+                "Register success! You can now log in",
+                "Registration failed"
+            )
+            if (isSuccess) {
+                val userManager = UserManager()
+                if (message != null) {
+                    userManager.addUser(message, UserModel()) { isSuccess1, _ ->
+                        if (!isSuccess1) {
+                            val user = Firebase.auth.currentUser
+                            user?.delete()?.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    utils.showToast(
+                                        this, "Error occurred - register again"
+                                    )
+                                } else {
+                                    utils.showToast(this, "Failed to delete account")
                                 }
                             }
                         } else {
-                            utils.showToast(this, "User ID is null")
+                            lifecycleScope.launch {
+                                saveCredential(
+                                    bind.emailEditText.text.toString(),
+                                    bind.passwordEditText.text.toString()
+                                )
+                            }
                         }
                     }
-
+                } else {
+                    utils.showToast(this, "User ID is null")
                 }
             }
-        }
 
+        }
+    }
+
+    private suspend fun saveCredential(username: String, password: String) {
+        val credentialManager = CredentialManager.create(this)
+
+        try {
+            credentialManager.createCredential(
+                request = CreatePasswordRequest(username, password), context = this
+            )
+
+        } catch (_: CreateCredentialCancellationException) {
+        } catch (e: CreateCredentialException) {
+            utils.showToast(this, "Credential save error")
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.diceroom.models
+package com.example.diceroom.managers
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

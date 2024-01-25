@@ -1,4 +1,4 @@
-package com.example.diceroom
+package com.example.diceroom.games
 
 import android.content.Context
 import android.content.Intent
@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.diceroom.authentication.AuthManager
-import com.example.diceroom.models.GameInfo
-import com.example.diceroom.models.GameManager
-import com.example.diceroom.models.UserManager
+import com.example.diceroom.R
+import com.example.diceroom.managers.AuthManager
+import com.example.diceroom.managers.GameInfo
+import com.example.diceroom.managers.GameManager
+import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException

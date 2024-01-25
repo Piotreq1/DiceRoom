@@ -1,4 +1,4 @@
-package com.example.diceroom
+package com.example.diceroom.utils
 
 import android.content.Context
 import android.net.Uri
