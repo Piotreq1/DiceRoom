@@ -51,7 +51,8 @@
                 android:drawableStart="@drawable/email"
                 android:drawablePadding="8dp"
                 android:hint="Enter your email"
-                android:inputType="text" />
+                android:inputType="text"
+                android:isCredential="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,6 +96,7 @@
                 android:drawablePadding="8dp"
                 android:hint="Enter your password"
                 android:inputType="textPassword"
+                android:isCredential="true"
                 app:passwordToggleEnabled="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -107,30 +109,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="65dp"
         android:layout_marginTop="15dp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/nameCardView">
 
-        <CheckBox
-            android:id="@+id/rememberCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remember me"
-            android:textSize="11sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:textAlignment="textEnd" />
-
         <TextView
             android:id="@+id/forgotPasswordText"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:text="Forgot Password?"
-            android:textAlignment="textStart"
             android:textColor="?attr/colorAccent"
             android:textSize="11sp" />
     </LinearLayout>

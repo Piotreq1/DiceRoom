@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.databinding.ProfileConfigActivityViewBinding
-import com.example.diceroom.models.UserManager
+import com.example.diceroom.managers.UserManager
 import com.example.diceroom.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.Calendar
