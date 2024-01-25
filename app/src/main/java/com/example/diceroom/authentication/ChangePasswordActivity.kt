@@ -7,6 +7,7 @@ import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.databinding.ChangePasswordActivityViewBinding
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.utils.Utils
 
 class ChangePasswordActivity : AppCompatActivity() {

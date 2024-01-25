@@ -10,6 +10,7 @@ import androidx.credentials.exceptions.CreateCredentialCancellationException
 import androidx.credentials.exceptions.CreateCredentialException
 import androidx.lifecycle.lifecycleScope
 import com.example.diceroom.databinding.SigninActivityViewBinding
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.managers.UserModel
 import com.example.diceroom.utils.Utils
