@@ -55,8 +55,7 @@ class UserManager {
 
         userFavouritesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val favoritesList: List<String>? = snapshot.value as? List<String>
-                onComplete(favoritesList)
+                onComplete( snapshot.value as? List<String>)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -96,7 +95,9 @@ class UserManager {
     fun deleteFromFavourites(
         userId: String, itemToDelete: String, onComplete: (Boolean, String?) -> Unit
     ) {
-        userRef.child(userId).child("favourites").orderByValue().equalTo(itemToDelete)
+        val userFavouritesRef = userRef.child(userId).child("favourites")
+
+        userFavouritesRef.orderByValue().equalTo(itemToDelete)
             .addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(snapshot: DataSnapshot) {

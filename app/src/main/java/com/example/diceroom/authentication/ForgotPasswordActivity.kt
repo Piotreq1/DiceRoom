@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diceroom.databinding.ForgotPasswordActivityViewBinding
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.utils.Utils
 
 class ForgotPasswordActivity : AppCompatActivity() {
