@@ -9,7 +9,7 @@ import com.example.diceroom.databinding.MainMenuActivityBinding
 import com.example.diceroom.games.GamesListFragment
 import com.example.diceroom.meetings.MeetingFragment
 import com.example.diceroom.profile.ProfileFragment
-import com.example.diceroom.tutorial.ViewPagerAdapter
+import com.example.diceroom.utils.ViewPagerAdapter
 
 
 class MainMenuActivity : AppCompatActivity(), ProfileFragment.OnNavigateToGameListListener {

@@ -17,6 +17,7 @@ data class MeetingModel(
     val level: String = "",
     val description: String = "",
     val image: String = "",
+    val maxMembers: Int = 0,
     val participants: List<String>? = null
 )
 
@@ -27,7 +28,7 @@ class MeetingManager {
         FirebaseDatabase.getInstance().reference.child("meetings")
 
     fun addMeeting(meetingModel: MeetingModel, onComplete: (Boolean, String?) -> Unit) {
-        meetingRef.setValue(meetingModel).addOnCompleteListener { task ->
+        meetingRef.push().setValue(meetingModel).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 onComplete(true, null)
             } else {

@@ -17,6 +17,7 @@ import com.example.diceroom.MainMenuActivity
 import com.example.diceroom.databinding.LoginActivityViewBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
+import com.example.diceroom.profile.ProfileConfigActivity
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 

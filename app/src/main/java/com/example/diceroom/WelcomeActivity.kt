@@ -15,8 +15,8 @@ import com.example.diceroom.authentication.SelectLoginActivity
 import com.example.diceroom.tutorial.FirstTutorial
 import com.example.diceroom.tutorial.SecondTutorial
 import com.example.diceroom.tutorial.ThirdTutorial
-import com.example.diceroom.tutorial.ViewPagerAdapter
 import com.example.diceroom.tutorial.WelcomeTutorial
+import com.example.diceroom.utils.ViewPagerAdapter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator

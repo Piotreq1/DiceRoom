@@ -53,13 +53,16 @@
             android:name=".authentication.ChangePasswordActivity"
             android:exported="true" />
         <activity
-            android:name=".authentication.ProfileConfigActivity"
+            android:name=".profile.ProfileConfigActivity"
             android:exported="true" />
         <activity
             android:name=".MainMenuActivity"
             android:exported="true" />
         <activity
             android:name=".games.GameDetailsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".meetings.AddMeetingActivity"
             android:exported="true" />
     </application>
 
