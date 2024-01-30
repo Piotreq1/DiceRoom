@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
@@ -15,8 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DiceRoom"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="28">
+        android:usesCleartextTraffic="true">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -29,7 +28,7 @@
         </provider>
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,30 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".authentication.SelectLoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.LoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.RegisterActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.ForgotPasswordActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.ChangePasswordActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.ProfileConfigActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MainMenuActivity"
-            android:exported="true" />
-        <activity
-            android:name=".games.GameDetailsActivity"
-            android:exported="true" />
     </application>
 
 </manifest>

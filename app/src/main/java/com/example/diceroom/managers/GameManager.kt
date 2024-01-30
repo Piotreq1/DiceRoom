@@ -1,6 +1,8 @@
 package com.example.diceroom.managers
 
 import android.util.Xml
+import com.example.diceroom.utils.Constants.Companion.GAME_INFO_API_ENDPOINT
+import com.example.diceroom.utils.Constants.Companion.HOT_LIST_API_ENDPOINT
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -26,8 +28,6 @@ data class GameDetails(
 )
 
 class GameManager {
-    private val hotListEndpoint: String = "https://boardgamegeek.com/xmlapi2/hot?type=boardgame"
-    private val gameInfoEndpoint: String = "https://boardgamegeek.com/xmlapi2/thing?id="
     private val client = OkHttpClient()
 
     private fun enqueueCall(request: Request, callback: (String?, Exception?) -> Unit) {
@@ -52,7 +52,7 @@ class GameManager {
         ifFavouriteGames: Boolean,
         callback: (List<GameInfo>?, Exception?) -> Unit
     ) {
-        val request = Request.Builder().url(hotListEndpoint).build()
+        val request = Request.Builder().url(HOT_LIST_API_ENDPOINT).build()
 
         enqueueCall(request) { responseBody, exception ->
             try {
@@ -118,7 +118,7 @@ class GameManager {
     }
 
     fun fetchGameDetailsById(gameId: String, callback: (GameDetails?, Exception?) -> Unit) {
-        val url = "$gameInfoEndpoint$gameId"
+        val url = "$GAME_INFO_API_ENDPOINT$gameId"
         val request = Request.Builder().url(url).build()
         enqueueCall(request) { responseBody, exception ->
             try {

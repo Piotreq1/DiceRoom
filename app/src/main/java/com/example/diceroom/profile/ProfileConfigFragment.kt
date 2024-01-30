@@ -1,50 +1,49 @@
 package com.example.diceroom.profile
 
-import android.app.DatePickerDialog
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.OnBackPressedCallback
+import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import com.example.diceroom.MainMenuActivity
-import com.example.diceroom.utils.Utils
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.diceroom.R
+import com.example.diceroom.databinding.FragmentProfileConfigBinding
 import com.example.diceroom.managers.AuthManager
-import com.example.diceroom.databinding.ProfileConfigActivityViewBinding
 import com.example.diceroom.managers.UserManager
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import com.example.diceroom.utils.Utils
 
 
-class ProfileConfigActivity : AppCompatActivity() {
-    private lateinit var bind: ProfileConfigActivityViewBinding
+class ProfileConfigFragment : Fragment() {
+    private lateinit var bind: FragmentProfileConfigBinding
     private var currentUserId: String? = null
     private var selectedImageUri: Uri? = null
     private val utils = Utils()
     private var isFirstTimeConfiguration: Boolean = false
     private val userManager = UserManager()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bind = ProfileConfigActivityViewBinding.inflate(layoutInflater)
-        setContentView(bind.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        bind = FragmentProfileConfigBinding.inflate(layoutInflater)
+
 
         val authManager = AuthManager()
         currentUserId = authManager.getCurrentUser()?.uid!!
 
-        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isFirstTimeConfiguration) {
-                    utils.showToast(bind.root.context, "You need to configure your profile!")
-                } else {
-                    finish()
-                }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (isFirstTimeConfiguration) {
+                utils.showToast(bind.root.context, "You need to configure your profile!")
+            } else {
+                findNavController().popBackStack(R.id.mainMenuFragment, false)
             }
-        })
+        }
+
+
 
         if (currentUserId != null) {
             userManager.getUserById(currentUserId!!) { user ->
@@ -53,7 +52,10 @@ class ProfileConfigActivity : AppCompatActivity() {
                     bind.birthdateEditText.setText(user.birthdate)
                     bind.nameEditText.setText(user.firstname)
                     bind.nicknameEditText.setText(user.nickname)
-                    utils.downloadImageFromFirebaseStorage(this, user.avatar) { isSuccess, file ->
+                    utils.downloadImageFromFirebaseStorage(
+                        requireContext(),
+                        user.avatar
+                    ) { isSuccess, file ->
                         if (isSuccess) {
                             bind.profileImageView.setImageURI(Uri.fromFile(file))
                         }
@@ -67,7 +69,7 @@ class ProfileConfigActivity : AppCompatActivity() {
                 selectedImageUri = it
                 bind.profileImageView.setImageURI(it)
             } catch (e: Exception) {
-                utils.showToast(this, "Error occurred while picking image")
+                utils.showToast(requireContext(), "Error occurred while picking image")
             }
         }
 
@@ -76,7 +78,7 @@ class ProfileConfigActivity : AppCompatActivity() {
                     bind.birthdateEditText.text
                 )
             ) {
-                utils.showToast(this, "You need to fill in all fields")
+                utils.showToast(requireContext(), "You need to fill in all fields")
             } else {
                 val updatedFields = mutableMapOf(
                     "nickname" to bind.nicknameEditText.text.toString(),
@@ -88,14 +90,14 @@ class ProfileConfigActivity : AppCompatActivity() {
                     if (!isFirstTimeConfiguration) {
                         updateUserInfo(updatedFields)
                     } else {
-                        utils.showToast(this, "You need to pick an avatar")
+                        utils.showToast(requireContext(), "You need to pick an avatar")
                     }
                 } else {
                     utils.uploadImageToFirebaseStorage(selectedImageUri) { isImageUploadSuccess, imageUploadMessage ->
                         utils.handleFirebaseResult(
                             isImageUploadSuccess,
                             imageUploadMessage,
-                            this,
+                            requireContext(),
                             "Image upload successful",
                             "Image upload failed"
                         )
@@ -111,31 +113,15 @@ class ProfileConfigActivity : AppCompatActivity() {
         bind.profileImageView.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
-    }
 
-    fun showDatePickerDialog(view: View) {
-        val calendar = Calendar.getInstance()
-
-        DatePickerDialog(
-            this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                val selectedCalendar = Calendar.getInstance().apply {
-                    time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
-                        ?: Date()
-                }
-                if (selectedCalendar.timeInMillis > System.currentTimeMillis()) {
-                    utils.showToast(this, "Invalid birthdate. Please select a valid date.")
-                } else {
-                    bind.birthdateEditText.setText(selectedDate)
-                }
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            show()
+        bind.birthdateEditText.setOnClickListener {
+            utils.showDatePickerDialog(
+                requireContext(),
+                bind.birthdateEditText,
+                false
+            )
         }
+        return bind.root
     }
 
     private fun updateUserInfo(updatedFields: Map<String, String>) {
@@ -146,16 +132,19 @@ class ProfileConfigActivity : AppCompatActivity() {
                 utils.handleFirebaseResult(
                     isUserUpdateSuccess,
                     userUpdateMessage,
-                    this,
+                    requireContext(),
                     "Update successful",
                     "Update failed"
                 )
 
                 if (isUserUpdateSuccess) {
-                    isFirstTimeConfiguration = false
-                    val intent = Intent(this, MainMenuActivity::class.java)
-                    intent.putExtra("currentItem", 2)
-                    startActivity(intent)
+                    if (isFirstTimeConfiguration) {
+                        isFirstTimeConfiguration = false
+                        findNavController().navigate(R.id.action_profileConfigFragment_to_mainMenuFragment)
+                    } else {
+                        isFirstTimeConfiguration = false
+                        findNavController().popBackStack(R.id.mainMenuFragment, false)
+                    }
                 }
             }
         }

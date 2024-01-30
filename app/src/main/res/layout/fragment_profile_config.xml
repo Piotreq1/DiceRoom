@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".authentication.LoginActivity">
+    android:background="@color/white">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:contentDescription="Profile Picture View"
+            android:focusable="true"
+            android:src="@drawable/baseline_person_24" />
+    </androidx.cardview.widget.CardView>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -20,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
-        android:text="Email"
+        android:text="Nickname"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -45,14 +66,12 @@
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailEditText"
+                android:id="@+id/nicknameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/email"
                 android:drawablePadding="8dp"
-                android:hint="Enter your email"
-                android:inputType="text"
-                android:isCredential="true" />
+                android:hint="Enter your nick"
+                android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
-        android:text="Password"
+        android:text="Name"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -89,14 +108,12 @@
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordEditText"
+                android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/lock"
                 android:drawablePadding="8dp"
-                android:hint="Enter your password"
-                android:inputType="textPassword"
-                android:isCredential="true"
+                android:hint="Enter your name"
+                android:inputType="text"
                 app:passwordToggleEnabled="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -104,23 +121,49 @@
     </androidx.cardview.widget.CardView>
 
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/birthDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:text="Birth Date"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/birthDateCardView"
+        app:layout_constraintTop_toBottomOf="@+id/nameCardView" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/birthDateCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="65dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/nameCardView">
+        android:layout_marginHorizontal="75dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/birthDateLabel">
 
-        <TextView
-            android:id="@+id/forgotPasswordText"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Forgot Password?"
-            android:textColor="?attr/colorAccent"
-            android:textSize="11sp" />
-    </LinearLayout>
+            app:boxBackgroundMode="none"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/birthdateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:focusable="false"
+                android:hint="Select your birth date"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -141,28 +184,12 @@
         app:layout_constraintTop_toBottomOf="@+id/guideline3">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/loginButton"
+            android:id="@+id/confirmProfileButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:backgroundTint="@color/white"
-            android:text="Sign in"
+            android:text="Confirm"
             android:textColor="@color/black" />
 
     </androidx.cardview.widget.CardView>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/goToSignUpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Dont't have an account?\nSign up here"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="11sp"
-        android:textStyle="italic"
-        app:backgroundTint="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileChangesCardView" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
