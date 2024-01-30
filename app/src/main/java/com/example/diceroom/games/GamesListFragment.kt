@@ -1,24 +1,27 @@
 package com.example.diceroom.games
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.diceroom.R
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.GameInfo
 import com.example.diceroom.managers.GameManager
 import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Constants.Companion.FAVOURITES_KEY
+import com.example.diceroom.utils.Constants.Companion.GAMES_PREFS
+import com.example.diceroom.utils.Constants.Companion.GAME_ID
+import com.example.diceroom.utils.Constants.Companion.IS_GAME_FAVOURITE_KEY
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
@@ -35,6 +38,7 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+
         val view = inflater.inflate(R.layout.fragment_games_list, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -54,10 +58,12 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(gameId: String, isFavourite: Boolean) {
-        val intent = Intent(requireContext(), GameDetailsActivity::class.java)
-        intent.putExtra("gameId", gameId)
-        intent.putExtra("isFavourite", isFavourite)
-        startActivity(intent)
+        val bundle = bundleOf(
+            GAME_ID to gameId,
+            IS_GAME_FAVOURITE_KEY to isFavourite
+        )
+
+        findNavController().navigate(R.id.action_mainMenuFragment_to_gameDetailsFragment, bundle)
     }
 
     override fun onResume() {
@@ -82,11 +88,11 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
 
     private suspend fun checkIfFavourites() {
         val sharedPreferences =
-            requireContext().getSharedPreferences("gameListPrefs", Context.MODE_PRIVATE)
-        val ifFavouritesView = sharedPreferences.getBoolean("isFavourites", false)
+            requireContext().getSharedPreferences(GAMES_PREFS, Context.MODE_PRIVATE)
+        val ifFavouritesView = sharedPreferences.getBoolean(FAVOURITES_KEY, false)
         if (ifFavouritesView) {
             val editor = sharedPreferences.edit()
-            editor.putBoolean("isFavourites", false)
+            editor.putBoolean(FAVOURITES_KEY, false)
             editor.apply()
             lifecycleScope.launch {
                 val favouriteGamesList = fetchFavouriteGamesList()
@@ -115,7 +121,10 @@ class GamesListFragment : Fragment(), GameListAdapter.OnItemClickListener {
         val gameManager = GameManager()
         val utils = Utils()
         val future = CompletableFuture<List<GameInfo>>()
-        gameManager.fetchGamesInfo(favouritesGameIdsList, ifFavouriteGames) { gameInfoList, exception ->
+        gameManager.fetchGamesInfo(
+            favouritesGameIdsList,
+            ifFavouriteGames
+        ) { gameInfoList, exception ->
             if (exception == null && gameInfoList != null) {
                 future.complete(gameInfoList)
             } else {
@@ -177,8 +186,7 @@ class GameListAdapter(
         private val nameTextView: TextView = itemView.findViewById(R.id.gameName)
         private val yearPublishedTextView: TextView = itemView.findViewById(R.id.yearPublished)
         fun bind(game: GameInfo) {
-            Glide.with(itemView).load(game.thumbnail)
-                .apply(RequestOptions().placeholder(R.drawable.loading)).into(thumbnailImageView)
+            Utils().loadGlide(itemView, game.thumbnail, thumbnailImageView)
 
             nameTextView.text = game.name
             yearPublishedTextView.text = game.yearPublished

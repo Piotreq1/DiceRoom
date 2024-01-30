@@ -116,15 +116,41 @@
             android:id="@+id/action_mainMenuFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
         <action
-            android:id="@+id/action_mainMenuFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
             android:id="@+id/action_mainMenuFragment_to_addMeetingActivity"
             app:destination="@id/addMeetingActivity" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_gameDetailsFragment"
+            app:destination="@id/gameDetailsFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_gamesListFragment"
+            app:destination="@id/gamesListFragment" />
+        <argument
+            android:name="currentItem"
+            app:argType="integer"
+            android:defaultValue="1" />
     </fragment>
     <fragment
         android:id="@+id/addMeetingActivity"
-        android:name="com.example.diceroom.meetings.AddMeetingActivity"
+        android:name="com.example.diceroom.meetings.AddMeetingFragment"
         android:label="fragment_add_meeting"
         tools:layout="@layout/fragment_add_meeting" />
+    <fragment
+        android:id="@+id/gameDetailsFragment"
+        android:name="com.example.diceroom.games.GameDetailsFragment"
+        android:label="GameDetailsFragment"
+        tools:layout="@layout/fragment_game_details">
+        <argument
+            android:name="gameId"
+            app:argType="string" />
+        <argument
+            android:name="isFavourite"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/gamesListFragment"
+        android:name="com.example.diceroom.games.GamesListFragment"
+        android:label="GamesListFragment"
+        tools:layout="@layout/fragment_games_list"/>
+
 </navigation>

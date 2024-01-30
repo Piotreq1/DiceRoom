@@ -1,15 +1,22 @@
 package com.example.diceroom.utils
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.diceroom.R
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -17,7 +24,7 @@ class Utils {
 
     fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
         Handler(Looper.getMainLooper()).post {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, message, duration).show()
         }
     }
 
@@ -80,5 +87,51 @@ class Utils {
                 onComplete(false, null)
             }
         }
+    }
+
+    fun showDatePickerDialog(context: Context, place: TextInputEditText, isFuture: Boolean) {
+        val calendar = Calendar.getInstance()
+
+        DatePickerDialog(
+            context,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                val selectedCalendar = Calendar.getInstance().apply {
+                    time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
+                        ?: Date()
+                }
+                val isValidDate = if (isFuture) {
+                    selectedCalendar.timeInMillis > System.currentTimeMillis()
+                } else {
+                    selectedCalendar.timeInMillis < System.currentTimeMillis()
+                }
+
+                if (isValidDate) {
+                    place.setText(selectedDate)
+                } else {
+                    showToast(
+                        context, "Please select a valid ${if (isFuture) "future" else "past"} date."
+                    )
+                }
+
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            show()
+        }
+    }
+
+    fun loadGlide(context: Context, drawable: Any, place: ImageView) {
+        Glide.with(context).load(drawable)
+            .apply(RequestOptions().placeholder(R.drawable.loading))
+            .into(place)
+    }
+
+    fun loadGlide(view: View, drawable: Any, place: ImageView) {
+        Glide.with(view).load(drawable)
+            .apply(RequestOptions().placeholder(R.drawable.loading))
+            .into(place)
     }
 }

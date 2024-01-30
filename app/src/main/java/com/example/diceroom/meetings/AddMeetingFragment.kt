@@ -1,6 +1,5 @@
 package com.example.diceroom.meetings
 
-import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -9,18 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentAddMeetingBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
 import com.example.diceroom.utils.Utils
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
-class AddMeetingActivity : Fragment() {
+class AddMeetingFragment : Fragment() {
     private lateinit var bind: FragmentAddMeetingBinding
     private val utils = Utils()
     private var selectedImageUri: Uri? = null
@@ -44,7 +42,14 @@ class AddMeetingActivity : Fragment() {
         bind.meetingImageView.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
-        bind.meetingDate.setOnClickListener { showDatePickerDialog() }
+
+        bind.meetingDate.setOnClickListener {
+            utils.showDatePickerDialog(
+                requireContext(),
+                bind.meetingDate,
+                true
+            )
+        }
 
         val authManager = AuthManager()
         val currentUserId = authManager.getCurrentUser()?.uid!!
@@ -118,34 +123,8 @@ class AddMeetingActivity : Fragment() {
             )
 
             if (isSuccessful) {
-                // TODO: HANDLE IT
+                findNavController().popBackStack(R.id.mainMenuFragment, false)
             }
         }
     }
-
-    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-
-        DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                val selectedCalendar = Calendar.getInstance().apply {
-                    time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
-                        ?: Date()
-                }
-                if (selectedCalendar.timeInMillis < System.currentTimeMillis()) {
-                    utils.showToast(requireContext(), "Please select a valid future date.")
-                } else {
-                    bind.meetingDate.setText(selectedDate)
-                }
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            show()
-        }
-    }
-
 }

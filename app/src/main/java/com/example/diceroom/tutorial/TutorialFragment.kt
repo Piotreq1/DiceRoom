@@ -6,11 +6,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.diceroom.R
+import com.example.diceroom.utils.Constants.Companion.IS_FIRST_RUN_PREFS
 import com.example.diceroom.utils.ViewPagerAdapter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
@@ -28,6 +30,12 @@ class TutorialFragment : Fragment() {
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         val skipBtn: MaterialButton = view.findViewById(R.id.skip_to_login_mb)
 
+        val sharedPreferences = requireActivity().getSharedPreferences(IS_FIRST_RUN_PREFS, Context.MODE_PRIVATE)
+        val isFirstRun = sharedPreferences.getBoolean(IS_FIRST_RUN_PREFS, true)
+
+        if (!isFirstRun) {
+            skipBtn.visibility = GONE
+        }
 
         val fragmentList = arrayListOf(
             WelcomeTutorial(),
@@ -57,9 +65,9 @@ class TutorialFragment : Fragment() {
             }
         })
         skipBtn.setOnClickListener {
-            val sharedPref = requireActivity().getSharedPreferences("isFirstRun", Context.MODE_PRIVATE)
+            val sharedPref = requireActivity().getSharedPreferences(IS_FIRST_RUN_PREFS, Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
-            editor.putBoolean("isFirstRun", false)
+            editor.putBoolean(IS_FIRST_RUN_PREFS, false)
             editor.apply()
             findNavController().navigate(R.id.action_tutorialFragment_to_selectLogin)
         }

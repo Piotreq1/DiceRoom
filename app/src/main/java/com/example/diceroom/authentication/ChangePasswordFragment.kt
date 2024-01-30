@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentChangePasswordBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.utils.Utils
@@ -39,9 +41,8 @@ class ChangePasswordFragment : Fragment() {
                         "Password change failed"
                     )
 
-                    if (isSuccess) {/*     val intent = Intent(this, MainMenuActivity::class.java)
-                             intent.putExtra("currentItem", 2)
-                             startActivity(intent)*/
+                    if (isSuccess) {
+                        findNavController().popBackStack(R.id.mainMenuFragment, false)
                     }
                 }
             }

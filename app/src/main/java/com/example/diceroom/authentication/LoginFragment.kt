@@ -80,20 +80,14 @@ class LoginFragment : Fragment() {
                             if (user.nickname == "") {
                                 findNavController().navigate(R.id.action_loginFragment_to_profileConfigFragment)
                             }
-                            else {
-                                // TODO: HANDLE IT IDK WHAT HAPPENING
+                            else{
+                                findNavController().popBackStack(R.id.loginFragment, false)
                                 findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
                             }
                         }
-                        else {
-                            findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
-                        }
                     }
+                }
 
-                }
-                else {
-                    findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
-                }
             }
         }
     }

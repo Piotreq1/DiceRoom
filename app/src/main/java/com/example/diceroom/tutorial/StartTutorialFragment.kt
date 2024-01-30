@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
+import com.example.diceroom.utils.Constants.Companion.IS_FIRST_RUN_PREFS
 
 
 class StartTutorialFragment : Fragment() {
@@ -15,8 +16,8 @@ class StartTutorialFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val sharedPreferences = requireActivity().getSharedPreferences("isFirstRun", Context.MODE_PRIVATE)
-        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+        val sharedPreferences = requireActivity().getSharedPreferences(IS_FIRST_RUN_PREFS, Context.MODE_PRIVATE)
+        val isFirstRun = sharedPreferences.getBoolean(IS_FIRST_RUN_PREFS, true)
 
 
         if (isFirstRun) {

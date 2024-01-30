@@ -15,22 +15,17 @@ import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentProfileBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Constants.Companion.CURRENT_ITEM_KEY
+import com.example.diceroom.utils.Constants.Companion.FAVOURITES_KEY
+import com.example.diceroom.utils.Constants.Companion.GAMES_PREFS
+import com.example.diceroom.utils.Constants.Companion.MEET_PREFS
+import com.example.diceroom.utils.Constants.Companion.USER_MEETINGS_KEY
 import com.example.diceroom.utils.Utils
 
 
 class ProfileFragment : Fragment() {
     private lateinit var bind: FragmentProfileBinding
     private val utils = Utils()
-
-    interface OnNavigateToGameListListener {
-        fun navigateToGameList()
-    }
-
-    private var navigateToGameListListener: OnNavigateToGameListListener? = null
-
-    fun setOnNavigateToGameListListener(listener: OnNavigateToGameListListener) {
-        navigateToGameListListener = listener
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -73,18 +68,25 @@ class ProfileFragment : Fragment() {
             menuItem.setOnMenuItemClickListener {
                 when (menuItem.itemId) {
                     R.id.meetingsItem -> {
-                        // TODO: Meetings implementation
-                        this.context?.let { it1 -> utils.showToast(it1, "Not implemented yet!") }
+                        val sharedPreferences = requireContext().getSharedPreferences(
+                            MEET_PREFS, Context.MODE_PRIVATE
+                        )
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean(USER_MEETINGS_KEY, true)
+                        editor.apply()
+                        val args = Bundle()
+                        args.putInt(CURRENT_ITEM_KEY, 1)
+
+                        findNavController().navigate(R.id.mainMenuFragment, args)
                         true
                     }
 
                     R.id.editProfileItem -> {
-                       findNavController().navigate(R.id.action_mainMenuFragment_to_profileConfigFragment)
+                        findNavController().navigate(R.id.action_mainMenuFragment_to_profileConfigFragment)
                         true
                     }
 
                     R.id.tutorialItem -> {
-                        // TODO PASS SOMETHING TO NOT SHOW A SKIP
                         findNavController().navigate(R.id.action_mainMenuFragment_to_tutorialFragment)
                         true
                     }
@@ -98,22 +100,26 @@ class ProfileFragment : Fragment() {
                         findNavController().navigate(R.id.action_mainMenuFragment_to_changePasswordFragment)
                         true
                     }
+
                     R.id.favouritesItem -> {
                         if (currentUserId != null) {
-                            val sharedPreferences = requireContext().getSharedPreferences("gameListPrefs", Context.MODE_PRIVATE)
+                            val sharedPreferences = requireContext().getSharedPreferences(
+                                GAMES_PREFS, Context.MODE_PRIVATE
+                            )
                             val editor = sharedPreferences.edit()
-                            editor.putBoolean("isFavourites", true)
+                            editor.putBoolean(FAVOURITES_KEY, true)
                             editor.apply()
+                            val args = Bundle()
+                            args.putInt(CURRENT_ITEM_KEY, 0)
 
-                            // TODO: NAVIGATE TO GAME FRAGMENT
+                            findNavController().navigate(R.id.mainMenuFragment, args)
                         }
                         true
                     }
 
                     R.id.logoutItem -> {
                         authManager.logout()
-                        // TODO HANDLE BACKPRESSING
-                        findNavController().navigate(R.id.action_mainMenuFragment_to_loginFragment)
+                        findNavController().popBackStack(R.id.loginFragment, false)
                         true
                     }
 

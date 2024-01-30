@@ -1,6 +1,5 @@
 package com.example.diceroom.profile
 
-import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,10 +15,6 @@ import com.example.diceroom.databinding.FragmentProfileConfigBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.utils.Utils
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 
 class ProfileConfigFragment : Fragment() {
@@ -44,7 +39,7 @@ class ProfileConfigFragment : Fragment() {
             if (isFirstTimeConfiguration) {
                 utils.showToast(bind.root.context, "You need to configure your profile!")
             } else {
-                // TODO: CLOSE THAT FRAGMENT
+                findNavController().popBackStack(R.id.mainMenuFragment, false)
             }
         }
 
@@ -57,7 +52,10 @@ class ProfileConfigFragment : Fragment() {
                     bind.birthdateEditText.setText(user.birthdate)
                     bind.nameEditText.setText(user.firstname)
                     bind.nicknameEditText.setText(user.nickname)
-                    utils.downloadImageFromFirebaseStorage(requireContext(), user.avatar) { isSuccess, file ->
+                    utils.downloadImageFromFirebaseStorage(
+                        requireContext(),
+                        user.avatar
+                    ) { isSuccess, file ->
                         if (isSuccess) {
                             bind.profileImageView.setImageURI(Uri.fromFile(file))
                         }
@@ -116,33 +114,14 @@ class ProfileConfigFragment : Fragment() {
             galleryLauncher.launch("image/*")
         }
 
-        bind.birthdateEditText.setOnClickListener { showDatePickerDialog() }
-        return bind.root
-    }
-
-    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-
-        DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                val selectedCalendar = Calendar.getInstance().apply {
-                    time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
-                        ?: Date()
-                }
-                if (selectedCalendar.timeInMillis > System.currentTimeMillis()) {
-                    utils.showToast(requireContext(), "Invalid birthdate. Please select a valid date.")
-                } else {
-                    bind.birthdateEditText.setText(selectedDate)
-                }
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            show()
+        bind.birthdateEditText.setOnClickListener {
+            utils.showDatePickerDialog(
+                requireContext(),
+                bind.birthdateEditText,
+                false
+            )
         }
+        return bind.root
     }
 
     private fun updateUserInfo(updatedFields: Map<String, String>) {
@@ -159,8 +138,13 @@ class ProfileConfigFragment : Fragment() {
                 )
 
                 if (isUserUpdateSuccess) {
-                    isFirstTimeConfiguration = false
-                    findNavController().navigate(R.id.action_profileConfigFragment_to_mainMenuFragment)
+                    if (isFirstTimeConfiguration) {
+                        isFirstTimeConfiguration = false
+                        findNavController().navigate(R.id.action_profileConfigFragment_to_mainMenuFragment)
+                    } else {
+                        isFirstTimeConfiguration = false
+                        findNavController().popBackStack(R.id.mainMenuFragment, false)
+                    }
                 }
             }
         }
