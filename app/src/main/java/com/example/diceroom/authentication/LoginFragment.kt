@@ -1,10 +1,11 @@
 package com.example.diceroom.authentication
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetPasswordOption
@@ -12,31 +13,31 @@ import androidx.credentials.PasswordCredential
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.diceroom.MainMenuActivity
-import com.example.diceroom.databinding.LoginActivityViewBinding
+import androidx.navigation.fragment.findNavController
+import com.example.diceroom.R
+import com.example.diceroom.databinding.FragmentLoginBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
-import com.example.diceroom.profile.ProfileConfigActivity
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var bind: LoginActivityViewBinding
+class LoginFragment : Fragment() {
+    private lateinit var bind: FragmentLoginBinding
     private val utils = Utils()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bind = LoginActivityViewBinding.inflate(layoutInflater)
-        setContentView(bind.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        bind = FragmentLoginBinding.inflate(layoutInflater)
 
         bind.forgotPasswordText.setOnClickListener {
-            val intent = Intent(this, ForgotPasswordActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
         bind.goToSignUpButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
         val emailField: EditText = bind.emailEditText
@@ -52,13 +53,15 @@ class LoginActivity : AppCompatActivity() {
 
         bind.loginButton.setOnClickListener {
             if (TextUtils.isEmpty(emailField.text) || TextUtils.isEmpty(passwordField.text)) {
-                utils.showToast(this@LoginActivity, "You need to fill in all fields")
+                utils.showToast(requireContext(), "You need to fill in all fields")
             } else {
                 loginUser(emailField.text.toString(), passwordField.text.toString())
                 emailField.setText("")
                 passwordField.setText("")
             }
         }
+
+        return bind.root
     }
 
     private fun loginUser(email: String, password: String) {
@@ -67,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
             email, password
         ) { isSuccess, message ->
             utils.handleFirebaseResult(
-                isSuccess, message, this, "Login success", "Login failed"
+                isSuccess, message, requireContext(), "Login success", "Login failed"
             )
             if (isSuccess) {
                 val userManager = UserManager()
@@ -75,27 +78,34 @@ class LoginActivity : AppCompatActivity() {
                     userManager.getUserById(message) { user ->
                         if (user != null) {
                             if (user.nickname == "") {
-                                val intent = Intent(this, ProfileConfigActivity::class.java)
-                                startActivity(intent)
+                                findNavController().navigate(R.id.action_loginFragment_to_profileConfigFragment)
+                            }
+                            else {
+                                // TODO: HANDLE IT IDK WHAT HAPPENING
+                                findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
                             }
                         }
+                        else {
+                            findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
+                        }
                     }
-                }
 
-                val intent = Intent(this, MainMenuActivity::class.java)
-                startActivity(intent)
+                }
+                else {
+                    findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
+                }
             }
         }
     }
 
     private suspend fun getCredential(): PasswordCredential? {
-        val credentialManager = CredentialManager.create(this)
+        val credentialManager = CredentialManager.create(requireContext())
         try {
             val getCredRequest = GetCredentialRequest(
                 listOf(GetPasswordOption())
             )
             val credentialResponse = credentialManager.getCredential(
-                request = getCredRequest, context = this
+                request = getCredRequest, context = requireContext()
             )
             return credentialResponse.credential as? PasswordCredential
         } catch (e: GetCredentialCancellationException) {
@@ -103,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: NoCredentialException) {
             return null
         } catch (e: GetCredentialException) {
-            utils.showToast(this, "Error getting credential")
+            utils.showToast(requireContext(), "Error getting credential")
             return null
         }
     }

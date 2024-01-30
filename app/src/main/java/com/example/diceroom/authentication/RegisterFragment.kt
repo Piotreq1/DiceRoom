@@ -1,15 +1,19 @@
 package com.example.diceroom.authentication
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.credentials.CreatePasswordRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.CreateCredentialCancellationException
 import androidx.credentials.exceptions.CreateCredentialException
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.diceroom.databinding.SigninActivityViewBinding
+import androidx.navigation.fragment.findNavController
+import com.example.diceroom.R
+import com.example.diceroom.databinding.FragmentRegisterBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.managers.UserModel
@@ -18,17 +22,17 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
-class RegisterActivity : AppCompatActivity() {
-    private lateinit var bind: SigninActivityViewBinding
+class RegisterFragment : Fragment() {
+    private lateinit var bind: FragmentRegisterBinding
     private val utils = Utils()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bind = SigninActivityViewBinding.inflate(layoutInflater)
-        setContentView(bind.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        bind = FragmentRegisterBinding.inflate(layoutInflater)
 
         bind.goToLoginButton1.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
 
         bind.loginButton.setOnClickListener {
@@ -36,13 +40,14 @@ class RegisterActivity : AppCompatActivity() {
                     bind.confirmPasswordEditText.text
                 )
             ) {
-                utils.showToast(this, "You need to fill in all fields")
+                utils.showToast(requireContext(), "You need to fill in all fields")
             } else if (bind.passwordEditText.text.toString() != bind.confirmPasswordEditText.text.toString()) {
-                utils.showToast(this, "Passwords need to be the same")
+                utils.showToast(requireContext(), "Passwords need to be the same")
             } else {
                 registerUser()
             }
         }
+        return bind.root
     }
 
     private fun registerUser() {
@@ -54,7 +59,7 @@ class RegisterActivity : AppCompatActivity() {
             utils.handleFirebaseResult(
                 isSuccess,
                 message,
-                this,
+                requireContext(),
                 "Register success! You can now log in",
                 "Registration failed"
             )
@@ -67,10 +72,10 @@ class RegisterActivity : AppCompatActivity() {
                             user?.delete()?.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     utils.showToast(
-                                        this, "Error occurred - register again"
+                                        requireContext(), "Error occurred - register again"
                                     )
                                 } else {
-                                    utils.showToast(this, "Failed to delete account")
+                                    utils.showToast(requireContext(), "Failed to delete account")
                                 }
                             }
                         } else {
@@ -83,7 +88,7 @@ class RegisterActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    utils.showToast(this, "User ID is null")
+                    utils.showToast(requireContext(), "User ID is null")
                 }
             }
 
@@ -91,16 +96,16 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private suspend fun saveCredential(username: String, password: String) {
-        val credentialManager = CredentialManager.create(this)
+        val credentialManager = CredentialManager.create(requireContext())
 
         try {
             credentialManager.createCredential(
-                request = CreatePasswordRequest(username, password), context = this
+                request = CreatePasswordRequest(username, password), context = requireContext()
             )
 
         } catch (_: CreateCredentialCancellationException) {
         } catch (e: CreateCredentialException) {
-            utils.showToast(this, "Credential save error")
+            utils.showToast(requireContext(), "Credential save error")
         }
     }
 }

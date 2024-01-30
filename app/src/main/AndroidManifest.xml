@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
@@ -29,7 +30,7 @@
         </provider>
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,31 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".authentication.SelectLoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.LoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.RegisterActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.ForgotPasswordActivity"
-            android:exported="true" />
-        <activity
-            android:name=".authentication.ChangePasswordActivity"
-            android:exported="true" />
-        <activity
-            android:name=".profile.ProfileConfigActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MainMenuActivity"
-            android:exported="true" />
-        <activity
             android:name=".games.GameDetailsActivity"
-            android:exported="true" />
-        <activity
-            android:name=".meetings.AddMeetingActivity"
             android:exported="true" />
     </application>
 

@@ -4,8 +4,11 @@ import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.diceroom.databinding.FragmentAddMeetingBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
@@ -17,22 +20,24 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class AddMeetingActivity : AppCompatActivity() {
+class AddMeetingActivity : Fragment() {
     private lateinit var bind: FragmentAddMeetingBinding
     private val utils = Utils()
     private var selectedImageUri: Uri? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         bind = FragmentAddMeetingBinding.inflate(layoutInflater)
-        setContentView(bind.root)
+
 
         val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
             try {
                 selectedImageUri = it
                 bind.meetingImageView.setImageURI(it)
             } catch (e: Exception) {
-                utils.showToast(this, "Error occurred while picking image")
+                utils.showToast(requireContext(), "Error occurred while picking image")
             }
         }
 
@@ -58,16 +63,16 @@ class AddMeetingActivity : AppCompatActivity() {
                     meetingsMembersNumber
                 ) || TextUtils.isEmpty(meetingLocation)
             ) {
-                utils.showToast(this, "You need to fill in all fields")
+                utils.showToast(requireContext(), "You need to fill in all fields")
             } else {
                 if (selectedImageUri == null) {
-                    utils.showToast(this, "You need to pick an avatar")
+                    utils.showToast(requireContext(), "You need to pick an avatar")
                 } else {
                     utils.uploadImageToFirebaseStorage(selectedImageUri) { isImageUploadSuccess, imageUploadMessage ->
                         utils.handleFirebaseResult(
                             isImageUploadSuccess,
                             imageUploadMessage,
-                            this,
+                            requireContext(),
                             "Image upload successful",
                             "Image upload failed"
                         )
@@ -96,6 +101,8 @@ class AddMeetingActivity : AppCompatActivity() {
             }
 
         }
+
+        return bind.root
     }
 
 
@@ -105,13 +112,13 @@ class AddMeetingActivity : AppCompatActivity() {
             utils.handleFirebaseResult(
                 isSuccessful,
                 message,
-                this,
+                requireContext(),
                 "Meeting created!",
                 "Meeting creation failed"
             )
 
             if (isSuccessful) {
-                finish()
+                // TODO: HANDLE IT
             }
         }
     }
@@ -120,7 +127,7 @@ class AddMeetingActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
 
         DatePickerDialog(
-            this,
+            requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
                 val selectedCalendar = Calendar.getInstance().apply {
@@ -128,7 +135,7 @@ class AddMeetingActivity : AppCompatActivity() {
                         ?: Date()
                 }
                 if (selectedCalendar.timeInMillis < System.currentTimeMillis()) {
-                    utils.showToast(this, "Please select a valid future date.")
+                    utils.showToast(requireContext(), "Please select a valid future date.")
                 } else {
                     bind.meetingDate.setText(selectedDate)
                 }

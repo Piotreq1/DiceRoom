@@ -1,7 +1,6 @@
 package com.example.diceroom.profile
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,14 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
-import com.example.diceroom.utils.Utils
-import com.example.diceroom.WelcomeActivity
-import com.example.diceroom.managers.AuthManager
-import com.example.diceroom.authentication.ChangePasswordActivity
-import com.example.diceroom.authentication.SelectLoginActivity
 import com.example.diceroom.databinding.FragmentProfileBinding
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Utils
 
 
 class ProfileFragment : Fragment() {
@@ -82,15 +79,13 @@ class ProfileFragment : Fragment() {
                     }
 
                     R.id.editProfileItem -> {
-                        val intent = Intent(requireContext(), ProfileConfigActivity::class.java)
-                        startActivity(intent)
+                       findNavController().navigate(R.id.action_mainMenuFragment_to_profileConfigFragment)
                         true
                     }
 
                     R.id.tutorialItem -> {
-                        val intent = Intent(requireContext(), WelcomeActivity::class.java)
-                        intent.putExtra("isFirst", false)
-                        startActivity(intent)
+                        // TODO PASS SOMETHING TO NOT SHOW A SKIP
+                        findNavController().navigate(R.id.action_mainMenuFragment_to_tutorialFragment)
                         true
                     }
 
@@ -100,8 +95,7 @@ class ProfileFragment : Fragment() {
                     }
 
                     R.id.changePasswordItem -> {
-                        val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
-                        startActivity(intent)
+                        findNavController().navigate(R.id.action_mainMenuFragment_to_changePasswordFragment)
                         true
                     }
                     R.id.favouritesItem -> {
@@ -110,17 +104,16 @@ class ProfileFragment : Fragment() {
                             val editor = sharedPreferences.edit()
                             editor.putBoolean("isFavourites", true)
                             editor.apply()
-                            navigateToGameListListener?.navigateToGameList()
+
+                            // TODO: NAVIGATE TO GAME FRAGMENT
                         }
                         true
                     }
 
                     R.id.logoutItem -> {
                         authManager.logout()
-                        val intent = Intent(requireContext(), SelectLoginActivity::class.java)
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
+                        // TODO HANDLE BACKPRESSING
+                        findNavController().navigate(R.id.action_mainMenuFragment_to_loginFragment)
                         true
                     }
 
