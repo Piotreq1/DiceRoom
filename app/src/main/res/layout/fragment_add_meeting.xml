@@ -97,7 +97,6 @@
     </androidx.cardview.widget.CardView>
 
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/dateCardView"
         android:layout_width="match_parent"
@@ -169,22 +168,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/locationCardView">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <Spinner
+            android:id="@+id/meetingLevel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxBackgroundMode="none"
-            app:hintEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/meetingLevel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="8dp"
-                android:hint="Enter meeting level"
-                android:inputType="text" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
+            android:layout_margin="5dp"
+            android:layout_height="48sp"
+            android:prompt="@string/text_loading"
+            android:spinnerMode="dropdown" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -267,7 +257,7 @@
         app:layout_constraintTop_toBottomOf="@+id/guideline3">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/confirmProfileButton"
+            android:id="@+id/addMeetingButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:backgroundTint="@color/white"

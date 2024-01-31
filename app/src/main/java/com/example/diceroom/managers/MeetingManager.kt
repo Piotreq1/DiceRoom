@@ -62,7 +62,6 @@ class MeetingManager {
                         meetingsList.add(Pair(meeting, meetingId))
                     }
                 }
-
                 onComplete(meetingsList)
             }
 

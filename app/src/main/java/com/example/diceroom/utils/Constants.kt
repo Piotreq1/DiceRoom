@@ -2,6 +2,7 @@ package com.example.diceroom.utils
 
 class Constants {
     companion object {
+        const val MEETING_ID: String = "meetingId"
         const val BASE_BOARD_GAME_URL = "https://boardgamegeek.com/boardgame/"
         const val HOT_LIST_API_ENDPOINT: String =
             "https://boardgamegeek.com/xmlapi2/hot?type=boardgame"
@@ -19,5 +20,9 @@ class Constants {
         const val IS_GAME_FAVOURITE_KEY: String = "isFavourite"
         const val CURRENT_ITEM_KEY: String = "currentItem"
 
+    }
+
+    enum class MeetingLevel {
+        BEGINNER, INTERMEDIATE, PRO
     }
 }
