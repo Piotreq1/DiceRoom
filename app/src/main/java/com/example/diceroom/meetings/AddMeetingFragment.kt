@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -14,6 +16,7 @@ import com.example.diceroom.databinding.FragmentAddMeetingBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
+import com.example.diceroom.utils.Constants
 import com.example.diceroom.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +26,7 @@ class AddMeetingFragment : Fragment() {
     private lateinit var bind: FragmentAddMeetingBinding
     private val utils = Utils()
     private var selectedImageUri: Uri? = null
+    private lateinit var selectedLevel: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,17 +49,16 @@ class AddMeetingFragment : Fragment() {
 
         bind.meetingDate.setOnClickListener {
             utils.showDatePickerDialog(
-                requireContext(),
-                bind.meetingDate,
-                true
+                requireContext(), bind.meetingDate, true
             )
         }
 
         val authManager = AuthManager()
         val currentUserId = authManager.getCurrentUser()?.uid!!
 
-        bind.confirmProfileButton.setOnClickListener {
-            val meetingLevel = bind.meetingLevel.text
+        configureLevelSpinner()
+
+        bind.addMeetingButton.setOnClickListener {
             val meetingTitle = bind.meetingTitle.text
             val gameName = bind.gameName.text
             val meetingDate = bind.meetingDate.text
@@ -63,8 +66,9 @@ class AddMeetingFragment : Fragment() {
             val meetingLocation = bind.meetingLocation.text
             val meetingDescription = bind.meetingsDescription.text
 
-            if (TextUtils.isEmpty(meetingLevel) || TextUtils.isEmpty(meetingTitle) ||
-                TextUtils.isEmpty(gameName) || TextUtils.isEmpty(meetingDate) || TextUtils.isEmpty(
+            if (TextUtils.isEmpty(selectedLevel) || TextUtils.isEmpty(meetingTitle) || TextUtils.isEmpty(
+                    gameName
+                ) || TextUtils.isEmpty(meetingDate) || TextUtils.isEmpty(
                     meetingsMembersNumber
                 ) || TextUtils.isEmpty(meetingLocation)
             ) {
@@ -73,6 +77,7 @@ class AddMeetingFragment : Fragment() {
                 if (selectedImageUri == null) {
                     utils.showToast(requireContext(), "You need to pick an avatar")
                 } else {
+                    bind.addMeetingButton.isEnabled = false
                     utils.uploadImageToFirebaseStorage(selectedImageUri) { isImageUploadSuccess, imageUploadMessage ->
                         utils.handleFirebaseResult(
                             isImageUploadSuccess,
@@ -92,7 +97,7 @@ class AddMeetingFragment : Fragment() {
                                 currentDate,
                                 meetingDate.toString(),
                                 currentUserId,
-                                meetingLevel.toString(),
+                                selectedLevel,
                                 meetingDescription.toString(),
                                 imageUploadMessage.toString(),
                                 Integer.parseInt(meetingsMembersNumber.toString()),
@@ -101,6 +106,9 @@ class AddMeetingFragment : Fragment() {
 
                             addAndHandleMeeting(meetingModel)
                         }
+                        else{
+                            bind.addMeetingButton.isEnabled = true
+                        }
                     }
                 }
             }
@@ -108,6 +116,27 @@ class AddMeetingFragment : Fragment() {
         }
 
         return bind.root
+    }
+
+    private fun configureLevelSpinner() {
+        val meetingLevel = bind.meetingLevel
+        val meetingLevels = Constants.MeetingLevel.entries.toTypedArray()
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, meetingLevels)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        meetingLevel.adapter = adapter
+
+        meetingLevel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long
+            ) {
+                val selectedLevel = meetingLevels[position]
+                this@AddMeetingFragment.selectedLevel = selectedLevel.toString()
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+            }
+        }
     }
 
 

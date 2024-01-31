@@ -21,4 +21,8 @@ class Constants {
         const val CURRENT_ITEM_KEY: String = "currentItem"
 
     }
+
+    enum class MeetingLevel {
+        BEGINNER, INTERMEDIATE, PRO
+    }
 }
