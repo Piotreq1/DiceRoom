@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentMeetingBinding
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
+import com.example.diceroom.utils.Constants
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
@@ -63,16 +65,17 @@ class MeetingFragment : Fragment(), MeetingListAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(meetingId: String, isFavourite: Boolean) {
-        //TODO: IMPLEMENT ON CLICK
-        Utils().showToast(requireContext(), "Here is some on click meeting")
+        findNavController().navigate(
+            R.id.action_mainMenuFragment_to_meetingDetailsFragment, bundleOf(
+                Constants.MEETING_ID to meetingId
+            )
+        )
     }
 }
 
 class MeetingListAdapter(
-    private val recyclerView: RecyclerView,
-    private val itemClickListener: OnItemClickListener
-) :
-    RecyclerView.Adapter<MeetingListAdapter.MeetingViewHolder>() {
+    private val recyclerView: RecyclerView, private val itemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<MeetingListAdapter.MeetingViewHolder>() {
     private var meetingList: List<Pair<MeetingModel, String>> = emptyList()
 
     interface OnItemClickListener {
