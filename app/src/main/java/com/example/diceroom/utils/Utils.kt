@@ -113,7 +113,6 @@ class Utils {
                         context, "Please select a valid ${if (isFuture) "future" else "past"} date."
                     )
                 }
-
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -122,6 +121,7 @@ class Utils {
             show()
         }
     }
+
 
     fun loadGlide(context: Context, drawable: Any, place: ImageView) {
         Glide.with(context).load(drawable)
