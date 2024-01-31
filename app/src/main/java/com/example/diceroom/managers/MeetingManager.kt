@@ -49,6 +49,30 @@ class MeetingManager {
         }
     }
 
+    fun getAllMeetings(onComplete: (List<Pair<MeetingModel, String>>) -> Unit) {
+        meetingRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val meetingsList = mutableListOf<Pair<MeetingModel, String>>()
+
+                for (meetingSnapshot in snapshot.children) {
+                    val meetingId = meetingSnapshot.key
+                    val meeting = meetingSnapshot.getValue(MeetingModel::class.java)
+
+                    if (meetingId != null && meeting != null) {
+                        meetingsList.add(Pair(meeting, meetingId))
+                    }
+                }
+
+                onComplete(meetingsList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                onComplete(emptyList())
+            }
+        })
+    }
+
+
     fun getMeetingById(meetingId: String, onComplete: (MeetingModel?) -> Unit) {
         meetingRef.child(meetingId).get().addOnSuccessListener {
             onComplete(it.getValue(MeetingModel::class.java))

@@ -15,8 +15,9 @@ import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
 import com.example.diceroom.utils.Utils
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class AddMeetingFragment : Fragment() {
     private lateinit var bind: FragmentAddMeetingBinding
@@ -24,8 +25,7 @@ class AddMeetingFragment : Fragment() {
     private var selectedImageUri: Uri? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         bind = FragmentAddMeetingBinding.inflate(layoutInflater)
 
@@ -54,15 +54,15 @@ class AddMeetingFragment : Fragment() {
         val authManager = AuthManager()
         val currentUserId = authManager.getCurrentUser()?.uid!!
 
-        val meetingLevel = bind.meetingLevel.text
-        val meetingTitle = bind.meetingTitle.text
-        val gameName = bind.gameName.text
-        val meetingDate = bind.meetingDate.text
-        val meetingsMembersNumber = bind.meetingsMembersNumber.text
-        val meetingLocation = bind.meetingLocation.text
-        val meetingDescription = bind.meetingsDescription.text
-
         bind.confirmProfileButton.setOnClickListener {
+            val meetingLevel = bind.meetingLevel.text
+            val meetingTitle = bind.meetingTitle.text
+            val gameName = bind.gameName.text
+            val meetingDate = bind.meetingDate.text
+            val meetingsMembersNumber = bind.meetingsMembersNumber.text
+            val meetingLocation = bind.meetingLocation.text
+            val meetingDescription = bind.meetingsDescription.text
+
             if (TextUtils.isEmpty(meetingLevel) || TextUtils.isEmpty(meetingTitle) ||
                 TextUtils.isEmpty(gameName) || TextUtils.isEmpty(meetingDate) || TextUtils.isEmpty(
                     meetingsMembersNumber
@@ -82,7 +82,7 @@ class AddMeetingFragment : Fragment() {
                             "Image upload failed"
                         )
                         if (isImageUploadSuccess) {
-                            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM)
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                             val currentDate = dateFormat.format(Date())
 
                             val meetingModel = MeetingModel(
