@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -35,6 +36,14 @@ class MeetingDetailsFragment : Fragment() {
         bind = FragmentMeetingDetailsBinding.inflate(inflater, container, false)
         val args = arguments
         val id = args?.getString(Constants.MEETING_ID)
+
+        bind.chatCv.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_meetingDetailsFragment_to_chatFragment, bundleOf(
+                    Constants.MEETING_ID to id
+                )
+            )
+        }
 
         if (id == null) {
             utils.showToast(requireContext(), "Error occurred with meeting id")

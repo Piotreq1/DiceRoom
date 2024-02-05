@@ -28,11 +28,14 @@ class MeetingManager {
         FirebaseDatabase.getInstance().reference.child("meetings")
 
     fun addMeeting(meetingModel: MeetingModel, onComplete: (Boolean, String?) -> Unit) {
-        meetingRef.push().setValue(meetingModel).addOnCompleteListener { task ->
+        val meetingNode = meetingRef.push()
+        val meetingId = meetingNode.key
+
+        meetingNode.setValue(meetingModel).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                onComplete(true, null)
+                onComplete(true, meetingId)
             } else {
-                onComplete(false, task.exception?.message)
+                onComplete(false, null)
             }
         }
     }

@@ -9,7 +9,7 @@
         android:id="@+id/startTutorialFragment"
         android:name="com.example.diceroom.tutorial.StartTutorialFragment"
         android:label="welcome_fragment"
-        tools:layout="@layout/start_tutorial_fragment" >
+        tools:layout="@layout/start_tutorial_fragment">
         <action
             android:id="@+id/action_startTutorial_to_tutorial"
             app:destination="@id/tutorialFragment"
@@ -25,7 +25,7 @@
         android:id="@+id/tutorialFragment"
         android:name="com.example.diceroom.tutorial.TutorialFragment"
         android:label="fragment_view_pager"
-        tools:layout="@layout/fragment_tutorial" >
+        tools:layout="@layout/fragment_tutorial">
         <action
             android:id="@+id/action_tutorialFragment_to_selectLogin"
             app:destination="@id/selectLogin" />
@@ -36,7 +36,7 @@
         android:id="@+id/selectLogin"
         android:name="com.example.diceroom.authentication.SelectLoginFragment"
         android:label="fragment_view_pager"
-        tools:layout="@layout/fragment_select_login" >
+        tools:layout="@layout/fragment_select_login">
         <action
             android:id="@+id/action_selectLogin_to_registerFragment"
             app:destination="@id/registerFragment"
@@ -52,7 +52,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.diceroom.authentication.LoginFragment"
         android:label="fragment_view_pager"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
@@ -74,7 +74,7 @@
         android:id="@+id/registerFragment"
         android:name="com.example.diceroom.authentication.RegisterFragment"
         android:label="fragment_view_pager"
-        tools:layout="@layout/fragment_register" >
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -85,12 +85,12 @@
         android:id="@+id/changePasswordFragment"
         android:name="com.example.diceroom.authentication.ChangePasswordFragment"
         android:label="ChangePasswordFragment"
-        tools:layout="@layout/fragment_change_password"/>
+        tools:layout="@layout/fragment_change_password" />
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.example.diceroom.authentication.ForgotPasswordFragment"
         android:label="ForgotPasswordFragment"
-        tools:layout="@layout/fragment_forgot_password"/>
+        tools:layout="@layout/fragment_forgot_password" />
 
     <fragment
         android:id="@+id/profileConfigFragment"
@@ -126,8 +126,8 @@
             app:destination="@id/gamesListFragment" />
         <argument
             android:name="currentItem"
-            app:argType="integer"
-            android:defaultValue="1" />
+            android:defaultValue="1"
+            app:argType="integer" />
         <action
             android:id="@+id/action_mainMenuFragment_to_meetingDetailsFragment"
             app:destination="@id/meetingDetailsFragment" />
@@ -147,19 +147,31 @@
             app:argType="string" />
         <argument
             android:name="isFavourite"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/gamesListFragment"
         android:name="com.example.diceroom.games.GamesListFragment"
         android:label="GamesListFragment"
-        tools:layout="@layout/fragment_games_list"/>
+        tools:layout="@layout/fragment_games_list" />
     <fragment
         android:id="@+id/meetingDetailsFragment"
         android:name="com.example.diceroom.meetings.MeetingDetailsFragment"
         android:label="fragment_meeting_details"
-        tools:layout="@layout/fragment_meeting_details" >
+        tools:layout="@layout/fragment_meeting_details">
+        <argument
+            android:name="meetingId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_meetingDetailsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.diceroom.meetings.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat">
         <argument
             android:name="meetingId"
             app:argType="string" />
