@@ -21,12 +21,12 @@ class UserManager {
 
     fun addUser(userId: String, user: UserModel, onComplete: (Boolean, String?) -> Unit) {
         userRef.child(userId).setValue(user).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    onComplete(true, null)
-                } else {
-                    onComplete(false, task.exception?.message)
-                }
+            if (task.isSuccessful) {
+                onComplete(true, null)
+            } else {
+                onComplete(false, task.exception?.message)
             }
+        }
     }
 
 
@@ -55,7 +55,7 @@ class UserManager {
 
         userFavouritesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                onComplete( snapshot.value as? List<String>)
+                onComplete(snapshot.value as? List<String>)
             }
 
             override fun onCancelled(error: DatabaseError) {

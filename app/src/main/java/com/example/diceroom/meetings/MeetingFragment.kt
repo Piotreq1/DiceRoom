@@ -1,5 +1,6 @@
 package com.example.diceroom.meetings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentMeetingBinding
+import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
 import com.example.diceroom.utils.Constants
@@ -60,8 +62,34 @@ class MeetingFragment : Fragment(), MeetingListAdapter.OnItemClickListener {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            adapter.setData(fetchMeetingsList())
+            checkIfCurrentUserMeetings()
         }
+    }
+
+    private fun checkIfCurrentUserMeetings() {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(Constants.MEET_PREFS, Context.MODE_PRIVATE)
+        val ifCurrentUser = sharedPreferences.getBoolean(Constants.USER_MEETINGS_KEY, false)
+
+        if (ifCurrentUser) {
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(Constants.USER_MEETINGS_KEY, false)
+            editor.apply()
+            lifecycleScope.launch {
+                val meetingsList = fetchMeetingsList()
+                val userId = AuthManager().getCurrentUser()?.uid!!
+                val currentUserMeetings = meetingsList.filter { meetingPair ->
+                    val participants = meetingPair.first.participants
+                    participants != null && participants.contains(userId)
+                }
+                adapter.setData(currentUserMeetings)
+            }
+        } else {
+            lifecycleScope.launch {
+                adapter.setData(fetchMeetingsList())
+            }
+        }
+
     }
 
     override fun onItemClick(meetingId: String, isFavourite: Boolean) {

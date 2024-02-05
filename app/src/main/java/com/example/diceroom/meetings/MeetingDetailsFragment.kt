@@ -30,8 +30,7 @@ class MeetingDetailsFragment : Fragment() {
     private val userId = AuthManager().getCurrentUser()?.uid!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         bind = FragmentMeetingDetailsBinding.inflate(inflater, container, false)
         val args = arguments
@@ -61,41 +60,43 @@ class MeetingDetailsFragment : Fragment() {
     }
 
     private fun setOnLeaveClick(participants: List<String>?) {
-        if (participants != null) {
-            bind.leaveCv.setOnClickListener {
-                meetingManager.deleteParticipant(meetingId, userId) { isSuccess, message ->
-                    utils.handleFirebaseResult(
-                        isSuccess,
-                        message,
-                        requireContext(),
-                        "You left this meeting!",
-                        "Something went wrong!"
-                    )
-                    if (isSuccess) {
-                        bind.notJoinedLayout.visibility = VISIBLE
-                        bind.joinedLayout.visibility = GONE
-                    }
+        if (participants == null) return
+
+        bind.leaveCv.setOnClickListener {
+            meetingManager.deleteParticipant(meetingId, userId) { isSuccess, message ->
+                utils.handleFirebaseResult(
+                    isSuccess,
+                    message,
+                    requireContext(),
+                    "You left this meeting!",
+                    "Something went wrong!"
+                )
+                if (isSuccess) {
+                    setVisibility(VISIBLE, GONE, GONE)
                 }
             }
         }
     }
 
     private fun checkIfJoined(participants: List<String>?) {
-        if (participants != null) {
-            if (participants.contains(userId)) {
-                bind.notJoinedLayout.visibility = GONE
-                bind.joinedLayout.visibility = VISIBLE
-            }
+        if (participants == null) return
+        if (participants.contains(userId)) {
+            setVisibility(GONE, VISIBLE, VISIBLE)
         }
     }
 
+    private fun setVisibility(notJoined: Int, joined: Int, participants: Int) {
+        bind.notJoinedLayout.visibility = notJoined
+        bind.joinedLayout.visibility = joined
+        bind.participantsImage.visibility = participants
+    }
+
     private fun setOnJoinClick(maxMembers: Int, participants: List<String>?) {
+        if (participants == null) return
         bind.joinMeeting.setOnClickListener {
-            if (participants != null) {
-                if (participants.size >= maxMembers) {
-                    utils.showToast(requireContext(), "Meeting is full!")
-                    return@setOnClickListener
-                }
+            if (participants.size >= maxMembers) {
+                utils.showToast(requireContext(), "Meeting is full!")
+                return@setOnClickListener
             }
 
             meetingManager.addParticipant(meetingId, userId) { isSuccess, message ->
@@ -108,8 +109,7 @@ class MeetingDetailsFragment : Fragment() {
                 )
 
                 if (isSuccess) {
-                    bind.notJoinedLayout.visibility = GONE
-                    bind.joinedLayout.visibility = VISIBLE
+                    setVisibility(GONE, VISIBLE, VISIBLE)
                 }
             }
         }
