@@ -27,8 +27,7 @@ class LoginFragment : Fragment() {
     private lateinit var bind: FragmentLoginBinding
     private val utils = Utils()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         bind = FragmentLoginBinding.inflate(layoutInflater)
 
@@ -79,8 +78,7 @@ class LoginFragment : Fragment() {
                         if (user != null) {
                             if (user.nickname == "") {
                                 findNavController().navigate(R.id.action_loginFragment_to_profileConfigFragment)
-                            }
-                            else{
+                            } else {
                                 findNavController().popBackStack(R.id.loginFragment, false)
                                 findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
                             }

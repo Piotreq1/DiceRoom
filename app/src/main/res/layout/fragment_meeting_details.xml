@@ -30,6 +30,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="15dp"
                 android:contentDescription="participants"
+                android:visibility="gone"
                 android:scaleType="centerCrop"
                 android:src="@drawable/baseline_person_24" />
         </LinearLayout>
@@ -234,7 +235,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/notificationCv"
+                    android:id="@+id/chatCv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
@@ -249,9 +250,9 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_margin="15dp"
-                        android:contentDescription="notifications"
+                        android:contentDescription="chat"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/notification_64" />
+                        android:src="@drawable/group_64" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
         </LinearLayout>

@@ -9,6 +9,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.NumberPicker
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
@@ -92,7 +95,7 @@ class ProfileFragment : Fragment() {
                     }
 
                     R.id.notificationItem -> {
-                        // TODO: Notifications settings - new window / popup screen
+                        showNotificationSettingsPopup()
                         true
                     }
 
@@ -130,4 +133,34 @@ class ProfileFragment : Fragment() {
 
         return bind.root
     }
+
+    private fun showNotificationSettingsPopup() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Notification Settings")
+
+        val view = layoutInflater.inflate(R.layout.notification_settings_layout, null)
+
+        val switchNotification = view.findViewById<SwitchCompat>(R.id.switchNotification)
+        val numberPickerHours = view.findViewById<NumberPicker>(R.id.numberPickerHours)
+
+        numberPickerHours.minValue = 1
+        numberPickerHours.maxValue = 24
+        builder.setView(view)
+
+        builder.setPositiveButton("Save") { dialog, _ ->
+            val enableNotifications = switchNotification.isChecked
+            val hoursBefore = numberPickerHours.value
+
+            utils.showToast(requireContext(), "$enableNotifications $hoursBefore")
+
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
 }
