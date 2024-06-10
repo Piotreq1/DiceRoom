@@ -7,4 +7,11 @@
 
     <style name="Theme.DiceRoom" parent="Base.Theme.DiceRoom" />
     <style name="Theme.JetPackComposeBasic" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.DiceRoom.SplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+        <item name="postSplashScreenTheme">@style/Theme.DiceRoom</item>
+    </style>
+
 </resources>

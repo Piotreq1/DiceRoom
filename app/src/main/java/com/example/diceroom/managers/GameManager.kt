@@ -13,9 +13,12 @@ import java.io.IOException
 import java.io.StringReader
 
 data class GameInfo(
-    val id: String, val thumbnail: String, val name: String, val yearPublished: String, val isFavourite: Boolean
+    val id: String,
+    val thumbnail: String,
+    val name: String,
+    val yearPublished: String,
+    val isFavourite: Boolean
 )
-
 
 data class GameDetails(
     val name: String?,
