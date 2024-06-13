@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -13,6 +14,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.diceroom.R
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.text.SimpleDateFormat
@@ -124,14 +127,32 @@ class Utils {
 
 
     fun loadGlide(context: Context, drawable: Any, place: ImageView) {
-        Glide.with(context).load(drawable)
-            .apply(RequestOptions().placeholder(R.drawable.loading))
+        Glide.with(context).load(drawable).apply(RequestOptions().placeholder(R.drawable.loading))
             .into(place)
     }
 
     fun loadGlide(view: View, drawable: Any, place: ImageView) {
-        Glide.with(view).load(drawable)
-            .apply(RequestOptions().placeholder(R.drawable.loading))
+        Glide.with(view).load(drawable).apply(RequestOptions().placeholder(R.drawable.loading))
             .into(place)
+    }
+
+    fun createMessagingTopicForMeeting(meetingId: String) {
+        Firebase.messaging.subscribeToTopic(meetingId).addOnCompleteListener { task ->
+            var msg = "Subscribed"
+            if (!task.isSuccessful) {
+                msg = "Subscribe failed"
+            }
+            Log.d(Constants.FIREBASE_MESSAGING, msg)
+        }
+    }
+
+    fun leaveMessagingMeetingTopic(meetingId: String) {
+        Firebase.messaging.unsubscribeFromTopic(meetingId).addOnCompleteListener { task ->
+            var msg = "Unsubscribed"
+            if (!task.isSuccessful) {
+                msg = "Unsubscribe failed"
+            }
+            Log.d(Constants.FIREBASE_MESSAGING, msg)
+        }
     }
 }

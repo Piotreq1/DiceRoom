@@ -1,7 +1,7 @@
 package com.example.diceroom.managers
 
 import android.util.Log
-import com.example.diceroom.utils.Constants.Companion.FCM_TOKEN_TAG
+import com.example.diceroom.utils.Constants.Companion.FIREBASE_MESSAGING
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -145,9 +145,9 @@ class UserManager {
             userId, updatedFields
         ) { isUserUpdateSuccess, userUpdateMessage ->
             if (isUserUpdateSuccess) {
-                Log.d(FCM_TOKEN_TAG, "Token saved to database")
+                Log.d(FIREBASE_MESSAGING, "Token saved to database")
             } else {
-                Log.w(FCM_TOKEN_TAG, "Failed to save token $userUpdateMessage")
+                Log.w(FIREBASE_MESSAGING, "Failed to save token $userUpdateMessage")
             }
         }
     }

@@ -21,7 +21,7 @@ import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentLoginBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
-import com.example.diceroom.utils.Constants.Companion.FCM_TOKEN_TAG
+import com.example.diceroom.utils.Constants.Companion.FIREBASE_MESSAGING
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -115,8 +115,8 @@ class LoginFragment : Fragment() {
 
     private fun saveTokenAfterAuthentication(uID: String) {
         val sharedPreferences =
-            this.requireContext().getSharedPreferences(FCM_TOKEN_TAG, Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString(FCM_TOKEN_TAG, "") ?: return
+            this.requireContext().getSharedPreferences(FIREBASE_MESSAGING, Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString(FIREBASE_MESSAGING, "") ?: return
         UserManager().saveTokenOnDatabase(uID, token)
     }
 

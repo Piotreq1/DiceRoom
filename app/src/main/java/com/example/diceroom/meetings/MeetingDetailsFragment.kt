@@ -81,6 +81,7 @@ class MeetingDetailsFragment : Fragment() {
                     "Something went wrong!"
                 )
                 if (isSuccess) {
+                    utils.leaveMessagingMeetingTopic(meetingId)
                     setVisibility(VISIBLE, GONE, GONE)
                 }
             }
@@ -118,6 +119,7 @@ class MeetingDetailsFragment : Fragment() {
                 )
 
                 if (isSuccess) {
+                    utils.createMessagingTopicForMeeting(meetingId)
                     setVisibility(GONE, VISIBLE, VISIBLE)
                 }
             }

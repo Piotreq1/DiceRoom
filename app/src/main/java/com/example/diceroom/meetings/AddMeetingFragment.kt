@@ -153,6 +153,7 @@ class AddMeetingFragment : Fragment() {
 
             if (isSuccessful) {
                 message?.let { createChatForMeeting(it) }
+                message?.let { utils.createMessagingTopicForMeeting(it) }
             }
         }
     }
