@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentAddMeetingBinding
 import com.example.diceroom.managers.AuthManager
+import com.example.diceroom.managers.ChatManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
 import com.example.diceroom.utils.Constants
@@ -105,8 +106,7 @@ class AddMeetingFragment : Fragment() {
                             )
 
                             addAndHandleMeeting(meetingModel)
-                        }
-                        else{
+                        } else {
                             bind.addMeetingButton.isEnabled = true
                         }
                     }
@@ -152,6 +152,23 @@ class AddMeetingFragment : Fragment() {
             )
 
             if (isSuccessful) {
+                message?.let { createChatForMeeting(it) }
+            }
+        }
+    }
+
+    private fun createChatForMeeting(meetingId: String) {
+        ChatManager().createChat(
+            AuthManager().getCurrentUser()?.uid!!, meetingId
+        ) { isSuccess, message ->
+            utils.handleFirebaseResult(
+                isSuccess,
+                message,
+                requireContext(),
+                "Chat for meeting created!",
+                "Chat creation failed"
+            )
+            if (isSuccess) {
                 findNavController().popBackStack(R.id.mainMenuFragment, false)
             }
         }

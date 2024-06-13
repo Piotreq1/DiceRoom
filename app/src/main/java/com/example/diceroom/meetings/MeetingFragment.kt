@@ -92,7 +92,7 @@ class MeetingFragment : Fragment(), MeetingListAdapter.OnItemClickListener {
 
     }
 
-    override fun onItemClick(meetingId: String, isFavourite: Boolean) {
+    override fun onItemClick(meetingId: String) {
         findNavController().navigate(
             R.id.action_mainMenuFragment_to_meetingDetailsFragment, bundleOf(
                 Constants.MEETING_ID to meetingId
@@ -107,7 +107,7 @@ class MeetingListAdapter(
     private var meetingList: List<Pair<MeetingModel, String>> = emptyList()
 
     interface OnItemClickListener {
-        fun onItemClick(meetingId: String, isFavourite: Boolean)
+        fun onItemClick(meetingId: String)
     }
 
     fun setData(newMeetingList: List<Pair<MeetingModel, String>>) {
@@ -122,7 +122,7 @@ class MeetingListAdapter(
             val position = recyclerView.getChildAdapterPosition(view)
             if (position != RecyclerView.NO_POSITION) {
                 val (_, meetingId) = meetingList[position]
-                itemClickListener.onItemClick(meetingId, false)
+                itemClickListener.onItemClick(meetingId)
             }
         }
         return MeetingViewHolder(view)
