@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/senderImage"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginVertical="10dp"
                 android:layout_marginStart="25dp"
                 android:contentDescription="sender avatar"
@@ -40,16 +40,16 @@
                     android:id="@+id/chatMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_loading"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                     android:textAlignment="center"
-                    android:textSize="17sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/chatTimeStamp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="1dp"
-                    android:text="@string/text_loading"
+                    android:text="01-01-2024 00:00"
                     android:textAlignment="center"
                     android:textSize="11sp" />
             </LinearLayout>

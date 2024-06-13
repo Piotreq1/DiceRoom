@@ -4,5 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white1">#FAAAAFFF</color>
     <color name="grey">#FAB8B8B8</color>
-    <color name="blue">#FA94FFFC</color>
+    <color name="message_owner">#BF9696</color>
+    <color name="messages">#FFF1F1</color>
 </resources>

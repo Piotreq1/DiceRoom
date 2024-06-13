@@ -139,9 +139,8 @@ class ChatListAdapter(
             val currUser = AuthManager().getCurrentUser()?.uid!!
             UserManager().getUserById(chat.senderId) {
                 if (it != null) {
-                    if (chat.senderId == currUser) {
-                        messageCardView.setCardBackgroundColor(ContextCompat.getColor(itemView.context, R.color.blue))
-                    }
+                    val messageColour = if (chat.senderId == currUser) R.color.message_owner else R.color.messages
+                    messageCardView.setCardBackgroundColor(ContextCompat.getColor(itemView.context, messageColour))
                     Utils().loadGlide(itemView, it.avatar, thumbnailImageView)
                     messageTextView.text = chat.message
                     val formattedDate = formatDate(chat.timestamp)
