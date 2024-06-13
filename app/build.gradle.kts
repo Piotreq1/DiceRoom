@@ -52,6 +52,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.activity:activity-ktx:1.9.0")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))

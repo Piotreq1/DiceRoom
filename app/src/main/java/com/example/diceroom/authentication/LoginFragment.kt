@@ -1,5 +1,6 @@
 package com.example.diceroom.authentication
 
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentLoginBinding
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.UserManager
+import com.example.diceroom.utils.Constants.Companion.FCM_TOKEN_TAG
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -76,6 +78,7 @@ class LoginFragment : Fragment() {
                 if (message != null) {
                     userManager.getUserById(message) { user ->
                         if (user != null) {
+                            saveTokenAfterAuthentication(message)
                             if (user.nickname == "") {
                                 findNavController().navigate(R.id.action_loginFragment_to_profileConfigFragment)
                             } else {
@@ -109,4 +112,12 @@ class LoginFragment : Fragment() {
             return null
         }
     }
+
+    private fun saveTokenAfterAuthentication(uID: String) {
+        val sharedPreferences =
+            this.requireContext().getSharedPreferences(FCM_TOKEN_TAG, Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString(FCM_TOKEN_TAG, "") ?: return
+        UserManager().saveTokenOnDatabase(uID, token)
+    }
+
 }
