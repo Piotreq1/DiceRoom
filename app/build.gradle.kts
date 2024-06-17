@@ -70,4 +70,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.3.0-beta01")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-beta01")
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 }

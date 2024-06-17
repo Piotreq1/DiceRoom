@@ -1,4 +1,4 @@
-package com.example.diceroom
+package com.example.diceroom.fcm
 
 import android.content.Context
 import android.util.Log
