@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentMeetingDetailsBinding
+import com.example.diceroom.fcm.FCMNotifications
+import com.example.diceroom.fcm.NotificationBody
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.MeetingModel
@@ -81,7 +83,6 @@ class MeetingDetailsFragment : Fragment() {
                     "Something went wrong!"
                 )
                 if (isSuccess) {
-                    utils.leaveMessagingMeetingTopic(meetingId)
                     setVisibility(VISIBLE, GONE, GONE)
                 }
             }
@@ -119,7 +120,9 @@ class MeetingDetailsFragment : Fragment() {
                 )
 
                 if (isSuccess) {
-                    utils.createMessagingTopicForMeeting(meetingId)
+                    val joinedNotification =
+                        NotificationBody("Congrats!", "Successfully joined ${bind.titleLabel.text}")
+                    FCMNotifications().createMessagingTopicForMeeting(this.requireContext(), meetingId, joinedNotification)
                     setVisibility(GONE, VISIBLE, VISIBLE)
                 }
             }

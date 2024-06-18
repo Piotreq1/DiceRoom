@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,53 +13,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.diceroom.R
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
-import retrofit2.http.Body
-import retrofit2.http.POST
 import java.io.File
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-interface FcmApi {
-
-    @POST("/send")
-    suspend fun sendMessage(
-        @Body body: SendMessageDto
-    )
-
-    @POST("/broadcast")
-    suspend fun broadcast(
-        @Body body: SendMessageDto
-    )
-}
-
-data class SendMessageDto(
-    val to: String?,
-    val notification: NotificationBody
-)
-
-data class NotificationBody(
-    val title: String,
-    val body: String
-)
-
-private val api: FcmApi = Retrofit.Builder()
-    .baseUrl("http://10.0.2.2:8080/")
-    .addConverterFactory(MoshiConverterFactory.create())
-    .build()
-    .create()
 
 class Utils {
 
@@ -173,48 +132,6 @@ class Utils {
     fun loadGlide(view: View, drawable: Any, place: ImageView) {
         Glide.with(view).load(drawable).apply(RequestOptions().placeholder(R.drawable.loading))
             .into(place)
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun createMessagingTopicForMeeting(meetingId: String) {
-        Firebase.messaging.subscribeToTopic(meetingId).addOnCompleteListener { task ->
-            var msg = "Subscribed"
-            if (!task.isSuccessful) {
-                msg = "Subscribe failed"
-            }
-            GlobalScope.launch { sendMessage() }
-
-            Log.d(Constants.FIREBASE_MESSAGING, msg)
-        }
-    }
-
-    private suspend fun sendMessage() {
-        val messageDto = SendMessageDto(
-            to = null,
-            notification = NotificationBody(
-                title = "New message!",
-                body = "state.messageText"
-            )
-        )
-
-
-        try {
-            api.broadcast(messageDto)
-        } catch(e: HttpException) {
-            e.printStackTrace()
-        } catch(e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun leaveMessagingMeetingTopic(meetingId: String) {
-        Firebase.messaging.unsubscribeFromTopic(meetingId).addOnCompleteListener { task ->
-            var msg = "Unsubscribed"
-            if (!task.isSuccessful) {
-                msg = "Unsubscribe failed"
-            }
-            Log.d(Constants.FIREBASE_MESSAGING, msg)
-        }
     }
 
 }

@@ -83,6 +83,14 @@ class MeetingManager {
         }
     }
 
+    fun getMeetingTitleById(meetingId: String, onComplete: (String?) -> Unit) {
+        meetingRef.child(meetingId).get().addOnSuccessListener {
+            onComplete(it.getValue(MeetingModel::class.java)?.title)
+        }.addOnFailureListener {
+            onComplete(null)
+        }
+    }
+
     fun getParticipants(meetingId: String, onComplete: (List<String>?) -> Unit) {
         val meetingParticipantsRef = meetingRef.child(meetingId).child("participants")
 

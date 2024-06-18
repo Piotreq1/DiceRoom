@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentAddMeetingBinding
+import com.example.diceroom.fcm.FCMNotifications
+import com.example.diceroom.fcm.NotificationBody
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.ChatManager
 import com.example.diceroom.managers.MeetingManager
@@ -153,7 +155,9 @@ class AddMeetingFragment : Fragment() {
 
             if (isSuccessful) {
                 message?.let { createChatForMeeting(it) }
-                message?.let { utils.createMessagingTopicForMeeting(it) }
+                val joinedNotification =
+                    NotificationBody("Congrats!", "Successfully joined ${meetingModel.title}")
+                message?.let { FCMNotifications().createMessagingTopicForMeeting(this.requireContext(),it, joinedNotification) }
             }
         }
     }

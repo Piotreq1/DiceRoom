@@ -15,16 +15,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentChatBinding
+import com.example.diceroom.fcm.FCMNotifications
+import com.example.diceroom.fcm.NotificationBody
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.ChatManager
 import com.example.diceroom.managers.ChatMessage
+import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.utils.Constants
 import com.example.diceroom.utils.Utils
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
@@ -55,6 +61,7 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
                 updatedList.add(newMessage)
                 adapter.setData(updatedList)
                 recyclerView.scrollToPosition(updatedList.size - 1)
+                //buildNotification(meetingId, newMessage.senderId)
             }
         }
 
@@ -65,8 +72,35 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
     override fun onItemClick(chatId: String) {
         TODO("Not yet implemented")
     }
+    private fun buildNotification(meetingId: String, senderId: String) {
+        var meetingTitle: String
+        var userNickname: String
+        runBlocking { meetingTitle = fetchMeetingTitle(meetingId).toString() }
+        runBlocking { userNickname = fetchUsername(senderId).toString() }
 
+        val joinedNotification = NotificationBody(
+            "New message in $meetingTitle", "Successfully joined $userNickname"
+        )
+        FCMNotifications().sendMessageToTopic(requireContext(), meetingId, joinedNotification)
+    }
 
+    private suspend fun fetchMeetingTitle(meetingId: String): String? {
+        return suspendCoroutine { continuation ->
+            MeetingManager().getMeetingTitleById(meetingId) { title ->
+                continuation.resume(title)
+            }
+        }
+    }
+
+    private suspend fun fetchUsername(userId: String): String? {
+        return suspendCoroutine { continuation ->
+            UserManager().getUserById(userId) { user ->
+                if (user != null) {
+                    continuation.resume(user.nickname)
+                }
+            }
+        }
+    }
     private fun setSendListener() {
         bind.sendMessage.setOnClickListener {
             if (TextUtils.isEmpty(bind.newMessage.text)) {
@@ -83,6 +117,7 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
                         Utils().showToast(requireContext(), "Sending message failed!")
                     }
                     bind.newMessage.setText("")
+                  //  buildNotification(meetingId, userId)
                 }
             }
         }

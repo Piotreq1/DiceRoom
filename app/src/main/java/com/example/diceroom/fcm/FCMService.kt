@@ -1,7 +1,14 @@
 package com.example.diceroom.fcm
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.example.diceroom.MainActivity
+import com.example.diceroom.R
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.utils.Constants.Companion.FIREBASE_MESSAGING
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -15,29 +22,44 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        Log.d(FIREBASE_MESSAGING, "From: ${remoteMessage.from}")
+        super.onMessageReceived(remoteMessage)
 
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(FIREBASE_MESSAGING, "Message data payload: ${remoteMessage.data}")
-
-//            // Check if data needs to be processed by long running job
-//            if (needsToBeScheduled()) {
-//                // For long-running tasks (10 seconds or more) use WorkManager.
-//                scheduleJob()
-//            } else {
-//                // Handle message within 10 seconds
-//                handleNow()
-//            }
+        remoteMessage.data.isNotEmpty().let {
+            Log.d(FIREBASE_MESSAGING, "Message data payload: " + remoteMessage.data)
         }
 
-        // Check if message contains a notification payload.
         remoteMessage.notification?.let {
             Log.d(FIREBASE_MESSAGING, "Message Notification Body: ${it.body}")
+            sendNotification(it.body, it.title)
         }
+    }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+    private fun sendNotification(messageBody: String?, title: String?) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+
+        val notificationBuilder =
+            NotificationCompat.Builder(this, "CHANNEL_ID").setSmallIcon(R.drawable.logo)
+                .setContentTitle(title).setContentText(messageBody).setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val channel = NotificationChannel(
+            "CHANNEL_ID", "Channel human readable title", NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationManager.createNotificationChannel(channel)
+
+
+        notificationManager.notify(0, notificationBuilder.build())
     }
 
     private fun refreshUsersToken(token: String) {
