@@ -10,14 +10,20 @@ android {
 
     defaultConfig {
         applicationId = "com.example.diceroom"
-        minSdk = 33
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "mozilla/public-suffix-list.txt"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -52,6 +58,8 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.activity:activity-ktx:1.9.0")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
@@ -69,4 +77,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.3.0-beta01")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-beta01")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.23.0")
 }

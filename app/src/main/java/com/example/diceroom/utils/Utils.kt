@@ -20,6 +20,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+
 class Utils {
 
     fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
@@ -124,14 +125,15 @@ class Utils {
 
 
     fun loadGlide(context: Context, drawable: Any, place: ImageView) {
-        Glide.with(context).load(drawable)
-            .apply(RequestOptions().placeholder(R.drawable.loading))
+        Glide.with(context).load(drawable).apply(RequestOptions().placeholder(R.drawable.loading))
             .into(place)
     }
 
     fun loadGlide(view: View, drawable: Any, place: ImageView) {
-        Glide.with(view).load(drawable)
-            .apply(RequestOptions().placeholder(R.drawable.loading))
+        Glide.with(view).load(drawable).apply(RequestOptions().placeholder(R.drawable.loading))
             .into(place)
     }
+
 }
+
+

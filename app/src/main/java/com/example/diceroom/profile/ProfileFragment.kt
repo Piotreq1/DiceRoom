@@ -121,6 +121,10 @@ class ProfileFragment : Fragment() {
                     }
 
                     R.id.logoutItem -> {
+                        if (currentUserId != null) {
+                            userManager.saveTokenOnDatabase(currentUserId, "")
+                        }
+
                         authManager.logout()
                         findNavController().popBackStack(R.id.loginFragment, false)
                         true

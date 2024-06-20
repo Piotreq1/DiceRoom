@@ -1,10 +1,15 @@
 package com.example.diceroom
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.diceroom.databinding.FragmentMainMenuBinding
@@ -18,9 +23,19 @@ import com.example.diceroom.utils.ViewPagerAdapter
 class MainMenuFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var bind: FragmentMainMenuBinding
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            showNotificationAllowedDialog()
+        } else {
+            showNotificationDeniedDialog()
+        }
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         val args = arguments
@@ -35,9 +50,7 @@ class MainMenuFragment : Fragment() {
         )
 
         val adapter = ViewPagerAdapter(
-            fragments,
-            requireActivity().supportFragmentManager,
-            lifecycle
+            fragments, requireActivity().supportFragmentManager, lifecycle
         )
 
         viewPager.adapter = adapter
@@ -64,6 +77,47 @@ class MainMenuFragment : Fragment() {
             true
         }
 
+        askNotificationPermission()
+
         return bind.root
+    }
+
+    private fun askNotificationPermission() {
+
+        if (ContextCompat.checkSelfPermission(
+                this.requireContext(), Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // FCM SDK can post notifications
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            showAskForNotificationDialog()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun showAskForNotificationDialog() {
+        AlertDialog.Builder(requireContext()).setMessage("Allow app to send you notifications?")
+            .setPositiveButton("Allow") { _, _ ->
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }.setNegativeButton("Don't allow") { dialog, _ ->
+                dialog.dismiss()
+            }.create().show()
+    }
+
+    private fun showNotificationDeniedDialog() {
+        AlertDialog.Builder(requireContext()).setTitle("Notifications Disabled")
+            .setMessage("Notifications have been denied. You will not receive notifications from this app.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }.create().show()
+    }
+
+    private fun showNotificationAllowedDialog() {
+        AlertDialog.Builder(requireContext()).setTitle("Notifications Enabled")
+            .setMessage("You will now receive notifications from this app. Stay tuned for important alerts and exciting updates.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }.create().show()
     }
 }

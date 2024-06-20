@@ -20,6 +20,9 @@ class Constants {
         const val IS_GAME_FAVOURITE_KEY: String = "isFavourite"
         const val CURRENT_ITEM_KEY: String = "currentItem"
 
+        const val FIREBASE_MESSAGING: String = "FIREBASE_MESSAGING"
+        const val NOTIFICATION_CHANNEL: String = "NOTIFICATION_CHANNEL"
+
     }
 
     enum class MeetingLevel {

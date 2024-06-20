@@ -1,5 +1,7 @@
 package com.example.diceroom.managers
 
+import android.util.Log
+import com.example.diceroom.utils.Constants.Companion.FIREBASE_MESSAGING
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -11,7 +13,8 @@ data class UserModel(
     val nickname: String = "",
     val firstname: String = "",
     val birthdate: String = "",
-    val favourites: List<String>? = null
+    val favourites: List<String>? = null,
+    val token: String = ""
 )
 
 
@@ -113,6 +116,40 @@ class UserManager {
                     onComplete(false, error.message)
                 }
             })
+    }
+
+    fun getUsersByToken(token: String, onComplete: (List<String>?) -> Unit) {
+        userRef.orderByChild("token").equalTo(token)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val users: MutableList<String> = mutableListOf()
+                    for (userSnapshot in snapshot.children) {
+                        val userId = userSnapshot.key
+                        if (userId != null) {
+                            users.add(userId)
+                        }
+                    }
+                    onComplete(users)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    onComplete(null)
+                }
+            })
+    }
+
+    fun saveTokenOnDatabase(userId: String, token: String) {
+        val updatedFields = mutableMapOf("token" to token)
+
+        UserManager().updateUserFields(
+            userId, updatedFields
+        ) { isUserUpdateSuccess, userUpdateMessage ->
+            if (isUserUpdateSuccess) {
+                Log.d(FIREBASE_MESSAGING, "Token saved to database")
+            } else {
+                Log.w(FIREBASE_MESSAGING, "Failed to save token $userUpdateMessage")
+            }
+        }
     }
 
 }

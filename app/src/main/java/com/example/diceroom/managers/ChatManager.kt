@@ -7,9 +7,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 data class ChatMessage(
-    val senderId: String = "",
-    val message: String = "",
-    val timestamp: Long = 0
+    val senderId: String = "", val message: String = "", val timestamp: Long = 0
 )
 
 class ChatManager {
@@ -17,9 +15,7 @@ class ChatManager {
 
     fun createChat(userId: String, meetingId: String, onComplete: (Boolean, String?) -> Unit) {
         val templateMessage = ChatMessage(
-            senderId = userId,
-            message = "Hello Everyone!",
-            timestamp = System.currentTimeMillis()
+            senderId = userId, message = "Hello Everyone!", timestamp = System.currentTimeMillis()
         )
 
         chatRef.child(meetingId).push().setValue(templateMessage).addOnCompleteListener { task ->
@@ -65,5 +61,4 @@ class ChatManager {
             }
         })
     }
-
 }
