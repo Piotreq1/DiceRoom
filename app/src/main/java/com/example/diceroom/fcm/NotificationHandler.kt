@@ -13,8 +13,7 @@ import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
 import java.net.URL
 
-class FCMNotifications {
-
+class NotificationHandler {
     fun createMessagingTopicForMeeting(
         context: Context, meetingId: String, notificationBody: NotificationBody
     ) {
@@ -23,16 +22,16 @@ class FCMNotifications {
                 return@addOnCompleteListener
             }
             Log.d(FIREBASE_MESSAGING, "FCM topic subscribed")
-            sendMessageToTopic(context, meetingId, notificationBody)
+            sendMessage(context, meetingId, notificationBody)
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun sendMessageToTopic(context: Context, topic: String, notificationBody: NotificationBody) {
+    fun sendMessage(context: Context, topic: String, notificationBody: NotificationBody, senderId: String? = null) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val conn = buildConnection(context)
-                val jsonPayload = buildJsonPayload(topic, notificationBody)
+                val jsonPayload = buildJsonPayload(topic, notificationBody, senderId)
 
                 Log.d(FIREBASE_MESSAGING, "FCM notification sending: $jsonPayload")
 
@@ -56,7 +55,13 @@ class FCMNotifications {
         }
     }
 
-    private fun buildJsonPayload(topic: String, notificationBody: NotificationBody): String {
+    private fun buildJsonPayload(
+        topic: String,
+        notificationBody: NotificationBody,
+        senderId: String?
+    ): String {
+        val data = senderId?.let { """"senderId": "$senderId",""" } ?: ""
+
         return """
             {
                 "message": {
@@ -64,6 +69,9 @@ class FCMNotifications {
                     "notification": {
                         "title": "${notificationBody.title}",
                         "body": "${notificationBody.message}"
+                    },
+                    "data": {
+                        $data
                     }
                 }
             }

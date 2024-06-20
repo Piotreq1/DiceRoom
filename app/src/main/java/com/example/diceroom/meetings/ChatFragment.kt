@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diceroom.R
 import com.example.diceroom.databinding.FragmentChatBinding
-import com.example.diceroom.fcm.FCMNotifications
 import com.example.diceroom.fcm.NotificationBody
+import com.example.diceroom.fcm.NotificationHandler
 import com.example.diceroom.managers.AuthManager
 import com.example.diceroom.managers.ChatManager
 import com.example.diceroom.managers.ChatMessage
@@ -24,8 +24,9 @@ import com.example.diceroom.managers.MeetingManager
 import com.example.diceroom.managers.UserManager
 import com.example.diceroom.utils.Constants
 import com.example.diceroom.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -61,7 +62,6 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
                 updatedList.add(newMessage)
                 adapter.setData(updatedList)
                 recyclerView.scrollToPosition(updatedList.size - 1)
-                //buildNotification(meetingId, newMessage.senderId)
             }
         }
 
@@ -73,15 +73,19 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
         TODO("Not yet implemented")
     }
     private fun buildNotification(meetingId: String, senderId: String) {
-        var meetingTitle: String
-        var userNickname: String
-        runBlocking { meetingTitle = fetchMeetingTitle(meetingId).toString() }
-        runBlocking { userNickname = fetchUsername(senderId).toString() }
+        lifecycleScope.launch(Dispatchers.Main) {
+            val meetingTitleDeferred = async { fetchMeetingTitle(meetingId) }
+            val userNicknameDeferred = async { fetchUsername(senderId) }
 
-        val joinedNotification = NotificationBody(
-            "New message in $meetingTitle", "Successfully joined $userNickname"
-        )
-        FCMNotifications().sendMessageToTopic(requireContext(), meetingId, joinedNotification)
+            val meetingTitle = meetingTitleDeferred.await()
+            val userNickname = userNicknameDeferred.await()
+
+            val joinedNotification = NotificationBody(
+                "New message from $meetingTitle", "You have a new message from $userNickname"
+            )
+            NotificationHandler().sendMessage(requireContext(), meetingId, joinedNotification, userId)
+        }
+
     }
 
     private suspend fun fetchMeetingTitle(meetingId: String): String? {
@@ -117,7 +121,7 @@ class ChatFragment : Fragment(), ChatListAdapter.OnItemClickListener {
                         Utils().showToast(requireContext(), "Sending message failed!")
                     }
                     bind.newMessage.setText("")
-                  //  buildNotification(meetingId, userId)
+                    buildNotification(meetingId, userId)
                 }
             }
         }
